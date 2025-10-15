@@ -1,14 +1,15 @@
 /* PALETA DE COLORES */
 :root {
     /* Tema Claro */
-    --color-background: #F0F0F3; /* Fondo más claro para neomorfismo */
-    --color-text-dark: #333333;
-    --color-text-light: #777777; /* Color oscuro para texto sutil del footer/unidad */
-    --color-card-bg: #F0F0F3;
-    --color-card-shadow-light: #ffffff; /* Sombra Neomórfica: Luz */
-    --color-card-shadow-dark: rgba(174, 174, 192, 0.4); /* Sombra Neomórfica: Oscura */
-    --color-input-border: #D1D1D4; 
-    --color-input-disabled: #EBEBEC;
+    --color-background: #F8F9FA; /* Blanco muy sutil */
+    --color-text-dark: #212529; /* Gris muy oscuro */
+    --color-text-light: #6C757D; /* Gris medio para texto sutil */
+    --color-card-bg: #FFFFFF;
+    --color-card-border: #E9ECEF; /* Borde sutil */
+    --color-card-shadow: rgba(0, 0, 0, 0.05);
+    --color-input-bg: #F8F9FA;
+    --color-input-border: #CED4DA; 
+    --color-input-disabled: #E9ECEF;
     
     /* Tema Oscuro (Discord Style) */
     --dark-bg: #36393f; 
@@ -23,7 +24,7 @@
     --color-line-gradient: linear-gradient(90deg, var(--color-metal-start), var(--color-metal-end)); 
     --color-heart: #FF0000;      
     
-    /* Colores del Botón de Tema */
+    /* Colores del Botón de Tema (Modo Claro) */
     --btn-border-color: var(--dark-bg); /* Borde/Sol oscuro */
     --btn-hover-fill: var(--dark-bg);   /* Relleno oscuro */
     --btn-icon-hover: var(--color-background); /* Icono luna claro (color del fondo claro) */
@@ -39,51 +40,53 @@
 body {
     font-family: 'Arial', sans-serif;
     margin: 0; 
-    padding: 0;
-    background-color: var(--color-background); /* Fondo Neomórfico */
+    /* El body ya no tiene padding fijo, el espaciado lo da el contenedor */
+    background-color: var(--color-background); 
     min-height: 100vh; 
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
-    padding: var(--spacing-mobile); 
+    
+    /* Centrado del contenido */
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-start; /* Se centra horizontalmente y el contenido va arriba */
+    
+    padding-top: 100px; /* Espacio para el título y el botón fixed */
     box-sizing: border-box; 
     transition: background-color 0.4s;
 }
 
-/* 1. H1 Y SOMBRA DINÁMICA */
+/* 1. H1 Y SOMBRA SUTIL */
 h1 {
-    font-family: 'Bebas Neue', cursive; 
-    text-align: center; margin: 0 0 10px; font-size: 3em; letter-spacing: 2px; font-weight: 900;
+    font-family: 'Concert One', cursive; /* NUEVA TIPOGRAFÍA */
+    text-align: center; margin: 0 0 40px; font-size: 3em; letter-spacing: 2px; font-weight: 900;
+    
     background: var(--color-line-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent; 
     background-clip: text;
     
-    /* CAMBIO: Sombra más visible en modo claro */
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4); 
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15));
-    
+    /* SOMBRA SUTIL (Drop-shadow para no dañar el color) */
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3)); /* Mayor visibilidad en modo claro */
     transition: all 0.3s;
 }
 .dark-mode h1 {
     /* Sombra Blanca en modo oscuro */
-    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.6); /* Sombra más visible */
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.4));
+    filter: drop-shadow(2px 2px 2px rgba(255, 255, 255, 0.4));
 }
 
 
-/* 2. DISEÑO PROFESIONAL DE TARJETA (NEOMORFISMO) */
+/* 2. DISEÑO ELEGANTE DE TARJETA (CONTAINER) */
 .container {
-    width: 100%; 
-    max-width: 400px; 
-    margin: 10px 0; 
-    padding: 30px; 
+    width: 90%; /* Responsivo */
+    max-width: 450px; /* Más ancho */
+    margin: 0 0 20px 0; /* Margen solo debajo */
+    padding: 35px; /* Más espaciado interno */
     
+    /* Estilo Elegante */
     background: var(--color-card-bg);
-    border-radius: 20px; 
-    
-    /* Neomorfismo */
-    box-shadow: 
-        9px 9px 16px var(--color-card-shadow-dark), /* Sombra oscura (abajo-derecha) */
-        -9px -9px 16px var(--color-card-shadow-light); /* Sombra clara (arriba-izquierda) */
+    border-radius: 12px; 
+    border: 1px solid var(--color-card-border); /* Borde sutil */
+    box-shadow: 0 15px 30px var(--color-card-shadow); 
     
     position: relative;
     z-index: 10;
@@ -91,50 +94,67 @@ h1 {
 }
 
 /* Inputs, Labels, HR... */
-label { color: var(--color-text-dark); transition: color 0.3s; }
-.unidad { color: var(--color-text-light); transition: color 0.3s; }
+label { 
+    display: block;
+    margin: 15px 0 5px; 
+    font-weight: bold;
+    color: var(--color-text-dark); 
+    font-size: 1.1em;
+}
+.unidad { color: var(--color-text-light); font-weight: 400; font-size: 0.9em; }
+
 input[type="number"] { 
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
     box-sizing: border-box;
     font-size: 1em;
     border-radius: 8px;
     
-    /* Estilo de Input hundido Neomórfico */
-    background-color: var(--color-card-bg);
-    border: none;
-    box-shadow: 
-        inset 2px 2px 5px var(--color-card-shadow-dark), 
-        inset -3px -3px 7px var(--color-card-shadow-light);
+    /* Estilo de Input */
+    background-color: var(--color-input-bg);
+    border: 1px solid var(--color-input-border);
     transition: all 0.3s;
 }
 input:focus:not([disabled]) { 
-    box-shadow: 
-        inset 1px 1px 2px var(--color-card-shadow-dark), 
-        inset -1px -1px 2px var(--color-card-shadow-light),
-        0 0 0 3px rgba(61, 136, 78, 0.2); /* Foco suave */
+    border-color: var(--color-metal-start);
+    box-shadow: 0 0 0 3px rgba(61, 136, 78, 0.2); 
     outline: none;
 }
 input[disabled] { background-color: var(--color-input-disabled); cursor: not-allowed; }
 
-hr { background: var(--color-line-gradient); }
+hr { border: 0; height: 1px; background: var(--color-line-gradient); margin: 30px 0; }
 
-/* 3. FOOTER (Texto Oscuro en modo claro) */
+/* 3. FOOTER (Texto Oscuro) */
+footer {
+    margin-top: 20px; 
+    margin-bottom: var(--spacing-mobile);
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+}
 footer p {
-    color: var(--color-text-dark); /* CAMBIO: Texto Oscuro */
+    color: var(--color-text-dark); /* CAMBIO: Texto Oscuro por defecto */
     margin: 0; opacity: 0.7; transition: color 0.3s;
 }
 
-/* Corazón (se mantiene) */
-@keyframes beat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.15); } }
-.heart-icon { color: var(--color-heart); animation: beat 1s infinite; }
+/* Corazón Latiente */
+@keyframes beat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.2); } }
+.heart-icon { 
+    color: var(--color-heart); 
+    animation: beat 0.8s infinite alternate; /* Animación más rápida */
+    display: inline-block; 
+    margin: 0 3px; 
+}
 
 /* ==================================== */
-/* 4. BOTÓN DE TEMA (Animación Expansión Total) */
+/* 4. BOTÓN DE TEMA (Superior Derecho - Animación de Video) */
 /* ==================================== */
 .theme-toggle {
-    position: fixed; bottom: var(--spacing-mobile); left: var(--spacing-mobile); 
+    position: fixed; 
+    top: var(--spacing-mobile); /* Arriba */
+    right: var(--spacing-mobile); /* Derecha */
+    
     width: 120px; height: 40px; border-radius: 6px; 
     
     background: transparent;
@@ -146,43 +166,71 @@ footer p {
     z-index: 1000;
 }
 
-/* Estilo y posición base de los iconos */
+/* Iconos */
 .theme-toggle i {
     position: absolute; top: 50%; transform: translateY(-50%); font-size: 1.2em; z-index: 3;
     transition: all 0.25s;
 }
 
 /* Iconos de Modo Claro */
-.theme-toggle > .fa-sun { left: 10px; color: var(--btn-border-color); opacity: 1; } /* Sol oscuro visible */
-.theme-toggle > span > .fa-moon { right: 10px; left: auto; color: var(--btn-icon-hover); opacity: 0; } /* Luna clara invisible */
-
+.theme-toggle > .fa-sun { 
+    left: 50%; 
+    transform: translate(-50%, -50%); /* Centrado */
+    color: var(--btn-border-color); /* Sol oscuro visible */
+    opacity: 1;
+} 
+.theme-toggle > span > .fa-moon { 
+    left: 50%; 
+    transform: translate(-50%, -50%); /* Centrado */
+    color: var(--btn-icon-hover); /* Luna clara invisible */
+    opacity: 0; 
+}
 .hidden { opacity: 0 !important; } 
 
-/* Pseudo-elemento para la animación de RELLENO COMPLETO */
-.theme-toggle::after {
-    content: "";
+/* Pseudo-elementos para la animación de RELLENO LATERAL (Video 2) */
+
+/* El span y sus after ahora controlan la animación lateral */
+.theme-toggle > span { 
+    position: relative;
+    z-index: 2;
+    display: block; 
+    width: 100%;
+    height: 100%;
+}
+
+.theme-toggle > span::before,
+.theme-toggle > span::after {
+    width: 50%; 
+    height: 100%; 
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0; 
-    height: 0; 
     background-color: var(--btn-hover-fill); /* Relleno oscuro */
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s ease-out, height 0.3s ease-out;
+    transition: transform 0.25s ease-out; 
+    content: "";
     z-index: 1;
+    top: 0;
+}
+
+/* Mitad IZQUIERDA: Entra de izquierda a derecha */
+.theme-toggle > span::before { 
+    left: 0;
+    transform: translateX(-100%); 
+}
+
+/* Mitad DERECHA: Entra de derecha a izquierda */
+.theme-toggle > span::after { 
+    right: 0;
+    left: auto;
+    transform: translateX(100%);
 }
 
 /* ESTADO HOVER (Modo Claro) */
 .theme-toggle:hover { border-color: var(--btn-hover-fill); }
 
-.theme-toggle:hover::after {
-    width: 300%; /* Expansión para cubrir todo el rectángulo */
-    height: 300%; 
-}
+.theme-toggle:hover > span::before { transform: translateX(0); } 
+.theme-toggle:hover > span::after { transform: translateX(0); } 
 
 .theme-toggle:hover > .fa-sun { opacity: 0; } /* Oculta Sol */
-.theme-toggle:hover > span > .fa-moon { opacity: 1; color: var(--color-background); } /* Muestra Luna Clara */
+.theme-toggle:hover > span > .fa-moon { opacity: 1; } /* Muestra Luna Clara */
 
 
 /* ==================================== */
@@ -190,20 +238,20 @@ footer p {
 /* ==================================== */
 
 body.dark-mode { background-color: var(--dark-bg); }
-
 .dark-mode .container { 
     background: var(--dark-card-bg);
-    border-left-color: var(--color-metal-end); 
-    /* Estilo de sombra oscura */
+    border: 1px solid var(--dark-input-border);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
 }
+
 .dark-mode input[type="number"] {
     background-color: var(--dark-card-bg);
     border: 1px solid var(--dark-input-border);
     color: var(--dark-text); 
-    box-shadow: 
-        inset 2px 2px 5px rgba(0, 0, 0, 0.6), 
-        inset -3px -3px 7px rgba(255, 255, 255, 0.1);
+    box-shadow: none; /* Quitamos neomorfismo en oscuro */
+}
+.dark-mode input:focus:not([disabled]) {
+    box-shadow: 0 0 0 3px rgba(61, 136, 78, 0.4); 
 }
 .dark-mode label { color: var(--dark-text); }
 .dark-mode .unidad { color: var(--dark-text-subtle); }
@@ -216,23 +264,28 @@ body.dark-mode { background-color: var(--dark-bg); }
 .dark-mode .theme-toggle {
     border-color: var(--btn-icon-hover); /* Borde claro */
 }
-
-/* Modo Oscuro: Luna es el icono de inicio */
 .dark-mode .theme-toggle > .fa-sun { opacity: 0; } 
 .dark-mode .theme-toggle > span > .fa-moon { 
     opacity: 1 !important; 
-    left: 10px; right: auto; 
-    color: var(--btn-icon-hover); /* Luna clara */
+    color: var(--btn-icon-hover); /* Luna clara visible */
 }
 
-.dark-mode .theme-toggle::after {
-    background-color: var(--btn-icon-hover); /* Relleno CLARO */
+/* Modo Oscuro: Relleno CLARO */
+.dark-mode .theme-toggle > span::before,
+.dark-mode .theme-toggle > span::after {
+    background-color: var(--btn-icon-hover); 
 }
 
-.dark-mode .theme-toggle:hover { border-color: var(--btn-icon-hover); }
+/* Modo oscuro: REVELAR fondo en hover (animación inversa para revelar el fondo oscuro) */
+.dark-mode .theme-toggle:hover {
+    border-color: var(--btn-hover-fill); /* Borde oscuro */
+}
+.dark-mode .theme-toggle:hover > span::before { transform: translateX(-100%); } 
+.dark-mode .theme-toggle:hover > span::after { transform: translateX(100%); } 
 
-.dark-mode .theme-toggle:hover > .fa-sun { opacity: 1; color: var(--btn-border-color); } /* Sol Oscuro aparece */
-.dark-mode .theme-toggle:hover > span > .fa-moon { opacity: 0; } /* Luna se oculta */
+/* Modo oscuro: HOVER de ICONOS */
+.dark-mode .theme-toggle:hover > span > .fa-moon { opacity: 0; } 
+.dark-mode .theme-toggle:hover > .fa-sun { opacity: 1; color: var(--btn-hover-fill); } /* Sol oscuro aparece */
 
 
 /* ==================================== */
@@ -251,10 +304,13 @@ body.dark-mode { background-color: var(--dark-bg); }
 }
 
 
-/* MEDIA QUERY... */
+/* MEDIA QUERY (Posición de Botón) */
 @media (min-width: 600px) { 
+    body {
+        padding-top: 150px;
+    }
     .theme-toggle {
-        bottom: var(--spacing-desktop); 
-        left: var(--spacing-desktop);
+        top: var(--spacing-desktop); 
+        right: var(--spacing-desktop);
     }
 }

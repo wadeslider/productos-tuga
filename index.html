@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Las mascotas de Tuga</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Concert+One&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLMDJd4qVpWwW+S78/3pYFhXG+FwK4M0D/8p0D2/G9lXz8D/K9/04I+I2I2G+2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
@@ -15,8 +15,15 @@
 <body>
 
     <h1 id="mainTitle">Las mascotas de Tuga</h1>
+    
+    <button id="themeToggle" class="theme-toggle" aria-label="Cambiar tema">
+        <i class="fas fa-sun" data-icon="sun"></i> 
+        <span>
+            <i class="fas fa-moon" data-icon="moon"></i>
+        </span>
+    </button>
 
-    <div class="container new-card">
+    <div class="container">
         
         <label for="precioKilo">
             Precio por Kilogramo <span class="unidad">($/kg)</span>:
@@ -36,13 +43,6 @@
         <input type="number" id="pesoGramos" placeholder="Introduzca gramos (Ej: 500)" min="1" oninput="calcular(this)" disabled>
         
     </div>
-    
-    <button id="themeToggle" class="theme-toggle" aria-label="Cambiar tema">
-        <i class="fas fa-sun" data-icon="sun"></i> 
-        <span>
-            <i class="fas fa-moon" data-icon="moon"></i>
-        </span>
-    </button>
     
     <footer>
         <p>

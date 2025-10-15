@@ -1,26 +1,20 @@
 const THEME_STORAGE_KEY = 'user-theme-preference';
 
 /**
- * Se llama al modificar el campo de Precio por Kilogramo.
+ * (Funciones de cálculo omitidas por ser idénticas a la respuesta anterior)
  */
 function validarPrecioKilo() {
-    // ... (función de cálculo igual)
     const precioKiloInput = document.getElementById('precioKilo');
     const pesoGramosInput = document.getElementById('pesoGramos');
     const precioDeseadoInput = document.getElementById('precioDeseado');
-    
     const precioPorKilo = parseFloat(precioKiloInput.value);
-
     const esValido = !isNaN(precioPorKilo) && precioPorKilo > 0;
-
     pesoGramosInput.disabled = !esValido;
     precioDeseadoInput.disabled = !esValido;
-
     if (!esValido) {
         pesoGramosInput.value = '';
         precioDeseadoInput.value = '';
     }
-    
     if (esValido) {
         if (precioDeseadoInput.value) {
             calcular(precioDeseadoInput);
@@ -29,29 +23,18 @@ function validarPrecioKilo() {
         }
     }
 }
-
-
-/**
- * Función principal de cálculo.
- */
 function calcular(elemento) {
-    // ... (función de cálculo igual)
     const precioKiloInput = document.getElementById('precioKilo');
     const pesoGramosInput = document.getElementById('pesoGramos');
     const precioDeseadoInput = document.getElementById('precioDeseado');
-
     const precioPorKilo = parseFloat(precioKiloInput.value);
-
     if (isNaN(precioPorKilo) || precioPorKilo <= 0) { return; }
-
     const idModificado = elemento.id;
-
     if (idModificado === 'precioDeseado') {
         const precioDeseado = parseFloat(elemento.value);
         if (isNaN(precioDeseado) || precioDeseado < 0) { pesoGramosInput.value = ''; return; }
         const gramosFinal = (precioDeseado / precioPorKilo) * 1000;
         pesoGramosInput.value = gramosFinal.toFixed(0);
-
     } else if (idModificado === 'pesoGramos') {
         const pesoEnGramos = parseFloat(elemento.value);
         if (isNaN(pesoEnGramos) || pesoEnGramos < 0) { precioDeseadoInput.value = ''; return; }
@@ -59,6 +42,7 @@ function calcular(elemento) {
         precioDeseadoInput.value = precioFinal.toFixed(2);
     }
 }
+
 
 /**
  * Aplica el tema inmediatamente (sin transición).
@@ -70,12 +54,12 @@ function applyTheme(isDark) {
     
     if (isDark) {
         body.classList.add('dark-mode');
-        // Sol está visible por defecto, lo ocultamos y mostramos la luna
+        // Modo Oscuro: Luna visible, Sol oculto
         sunIcon.classList.add('hidden');
         moonIcon.classList.remove('hidden');
     } else {
         body.classList.remove('dark-mode');
-        // Luna está visible por defecto, la ocultamos y mostramos el sol
+        // Modo Claro: Sol visible, Luna oculta
         moonIcon.classList.add('hidden');
         sunIcon.classList.remove('hidden');
     }
@@ -94,7 +78,7 @@ function toggleTheme(event) {
     const nextThemeIsDark = !isDarkMode;
     localStorage.setItem(THEME_STORAGE_KEY, nextThemeIsDark ? 'dark' : 'light');
 
-    // 2. Configurar el color y la posición de inicio de la onda (Esquina Inferior Izquierda del botón)
+    // 2. Configurar el color y la posición de inicio de la onda 
     const lightBg = getComputedStyle(body).getPropertyValue('--color-background');
     const darkBg = getComputedStyle(body).getPropertyValue('--dark-bg');
     const nextThemeColor = nextThemeIsDark ? darkBg : lightBg;
@@ -113,12 +97,13 @@ function toggleTheme(event) {
     transitionElement.style.transform = 'scale(0)';
 
     requestAnimationFrame(() => {
-        // Calcular el radio para cubrir toda la pantalla (diagonal desde el botón hasta la esquina más lejana)
+        // Calcular la distancia a la esquina más lejana desde el centro del botón (Top Right)
         const distanceToFarCorner = Math.sqrt(
             Math.max(centerX, window.innerWidth - centerX) ** 2 + 
             Math.max(centerY, window.innerHeight - centerY) ** 2
         );
         
+        // El factor de escala para cubrir TODA la pantalla
         const scaleFactor = distanceToFarCorner * 2 / transitionElement.offsetWidth;
         
         transitionElement.style.transform = `scale(${scaleFactor})`;
