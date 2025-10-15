@@ -36,18 +36,22 @@ h1 {
     /* Usar aquí 'Classy Marisa' o la fuente de estilo atrevido */
     font-family: 'Bebas Neue', cursive; 
     text-align: center;
-    margin: 0 0 10px; /* Reducción de margen para centrar mejor */
+    margin: 0 0 10px;
     font-size: 3em; 
     letter-spacing: 2px;
     font-weight: 900;
     
-    /* Efecto Verde Metalizado (Key CSS for Metallic Look) */
+    /* Efecto Verde Metalizado */
     background: linear-gradient(180deg, var(--color-metal-start) 0%, var(--color-metal-end) 100%);
+    
+    /* CORRECCIÓN: Usamos solo el prefijo -webkit- para esta técnica */
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-fill-color: transparent;
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15)); /* Sombra para resaltar */
+    -webkit-text-fill-color: transparent; 
+    
+    background-clip: text; /* Mantenemos la versión estándar de background-clip */
+    /* text-fill-color: transparent; <-- ESTA LÍNEA ES LA QUE CAUSABA EL ERROR Y HA SIDO REMOVIDA */
+    
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15));
 }
 
 /* 2. ESTILO DE LA TARJETA (CONTAINER) */
