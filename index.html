@@ -9,9 +9,10 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>Calculadora de Croquetas</h1>
+    <h1>Las mascotas de Tuga</h1>
 
+    <div class="container">
+        
         <label for="precioKilo">
             Precio por Kilogramo <span class="unidad">($/kg)</span>:
         </label>
@@ -19,17 +20,25 @@
         
         <hr>
         
-        <label for="pesoGramos">
-            Peso <span class="unidad">(gramos)</span>:
-        </label>
-        <input type="number" id="pesoGramos" placeholder="Introduzca gramos (Ej: 500)" min="1" oninput="calcular(this)" disabled>
-        
         <label for="precioDeseado">
             Precio a Cobrar <span class="unidad">($)</span>:
         </label>
         <input type="number" id="precioDeseado" placeholder="Introduzca precio (Ej: 20)" min="0.01" oninput="calcular(this)" disabled>
 
+        <label for="pesoGramos">
+            Peso <span class="unidad">(gramos)</span>:
+        </label>
+        <input type="number" id="pesoGramos" placeholder="Introduzca gramos (Ej: 500)" min="1" oninput="calcular(this)" disabled>
+        
     </div>
+    
+    <button id="themeToggle" class="theme-toggle">
+        &#x263C;
+    </button>
+    
+    <footer>
+        <p>&copy; Made with &#x2764; by WadeSlider</p>
+    </footer>
 
     <script src="script.js"></script>
 

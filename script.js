@@ -23,12 +23,11 @@ function validarPrecioKilo() {
     
     // Si ya es válido, podemos llamar a 'calcular' para recalcular en caso de que ya hubiera valores
     if (esValido) {
-        // Llamamos a calcular sobre el campo de peso si tiene valor, si no, sobre el de precio deseado
-        // Esto asegura que si el usuario estaba escribiendo un valor, se calcule inmediatamente
-        if (pesoGramosInput.value) {
-            calcular(pesoGramosInput);
-        } else if (precioDeseadoInput.value) {
+        // La lógica de cuál calcular primero sigue siendo la misma:
+        if (precioDeseadoInput.value) {
             calcular(precioDeseadoInput);
+        } else if (pesoGramosInput.value) {
+            calcular(pesoGramosInput);
         }
     }
 }
@@ -46,7 +45,6 @@ function calcular(elemento) {
 
     const precioPorKilo = parseFloat(precioKiloInput.value);
 
-    // Si el precio por kilo no es válido, detenemos el cálculo (esto debería ser manejado por 'disabled', pero es buena práctica)
     if (isNaN(precioPorKilo) || precioPorKilo <= 0) {
         pesoGramosInput.value = '';
         precioDeseadoInput.value = '';
@@ -56,23 +54,8 @@ function calcular(elemento) {
     // 2. Determinar qué campo fue modificado
     const idModificado = elemento.id;
 
-    if (idModificado === 'pesoGramos') {
-        // --- Caso A: El usuario modificó los GRAMOS ---
-        const pesoEnGramos = parseFloat(elemento.value);
-
-        if (isNaN(pesoEnGramos) || pesoEnGramos < 0) {
-            precioDeseadoInput.value = '';
-            return;
-        }
-        
-        // CÁLCULO DE PRECIO: (Gramos / 1000) * Precio_Kilo
-        const precioFinal = (pesoEnGramos / 1000) * precioPorKilo;
-        
-        // Actualizar el campo de Precio Deseado con el nuevo cálculo
-        precioDeseadoInput.value = precioFinal.toFixed(2);
-
-    } else if (idModificado === 'precioDeseado') {
-        // --- Caso B: El usuario modificó el PRECIO ---
+    if (idModificado === 'precioDeseado') { // CAMBIO: Precio Deseado ahora es el primer caso
+        // --- Caso A: El usuario modificó el PRECIO ---
         const precioDeseado = parseFloat(elemento.value);
 
         if (isNaN(precioDeseado) || precioDeseado < 0) {
@@ -85,15 +68,41 @@ function calcular(elemento) {
 
         // Actualizar el campo de Gramos con el nuevo cálculo
         pesoGramosInput.value = gramosFinal.toFixed(0);
+
+    } else if (idModificado === 'pesoGramos') { // CAMBIO: Peso en gramos ahora es el segundo caso
+        // --- Caso B: El usuario modificó los GRAMOS ---
+        const pesoEnGramos = parseFloat(elemento.value);
+
+        if (isNaN(pesoEnGramos) || pesoEnGramos < 0) {
+            precioDeseadoInput.value = '';
+            return;
+        }
+        
+        // CÁLCULO DE PRECIO: (Gramos / 1000) * Precio_Kilo
+        const precioFinal = (pesoEnGramos / 1000) * precioPorKilo;
+        
+        // Actualizar el campo de Precio Deseado con el nuevo cálculo
+        precioDeseadoInput.value = precioFinal.toFixed(2);
     }
 }
 
+/**
+ * Función provisional para el botón de cambio de tema.
+ */
+function toggleTheme() {
+    alert("Función de cambio de tema (claro/oscuro) próxima a implementar.");
+}
+
+
 // Inicialización: Al cargar la página, limpiamos los campos y validamos el precio por kilo
 document.addEventListener('DOMContentLoaded', () => {
-    // Limpiamos los campos de cálculo
+    // 1. Limpiamos los campos de cálculo
     document.getElementById('pesoGramos').value = '';
     document.getElementById('precioDeseado').value = '';
     
-    // Validamos el precio por kilo para establecer el estado inicial de los campos de cálculo
+    // 2. Vinculamos el botón de tema a su función
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+    // 3. Validamos el precio por kilo para establecer el estado inicial
     validarPrecioKilo();
 });
