@@ -1,4 +1,4 @@
-/* PALETA DE COLORES */
+/* PALETA DE COLORES (SIN CAMBIOS) */
 :root {
     /* Tema Claro */
     --color-background: #F8F9FA; 
@@ -25,42 +25,44 @@
     --color-heart: #FF0000;      
     
     /* Colores del Botón de Tema */
-    --btn-border-color: var(--dark-bg); /* Oscuro para claro */
-    --btn-hover-fill: var(--dark-bg);   /* Relleno oscuro */
-    --btn-icon-hover: var(--color-background); /* Icono claro (color del fondo claro) */
+    --btn-border-color: var(--dark-bg); 
+    --btn-hover-fill: var(--dark-bg);   
+    --btn-icon-hover: var(--color-background); 
 
-    /* Espaciado responsivo (usamos REMs para mejor escalabilidad) */
+    /* Espaciado responsivo */
     --spacing: 1.25rem; /* ~20px */
 }
 
 /* ==================================== */
-/* 1. ESTILOS GLOBALES Y LAYOUT */
+/* 1. ESTILOS GLOBALES Y LAYOUT (CORRECCIÓN DE SCROLL) */
 /* ==================================== */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0; 
     background-color: var(--color-background); 
-    min-height: 100vh; 
+    /* Quitamos min-height: 100vh para dejar que el contenido se ajuste */
     
     display: flex; 
     flex-direction: column; 
     align-items: center; 
     justify-content: flex-start; 
     
-    padding: var(--spacing) 0; 
+    /* Usamos VMIN para el padding vertical, ajustándose al tamaño más pequeño del viewport */
+    padding: 2vmin 0; 
     box-sizing: border-box; 
     transition: background-color 0.4s;
     
-    /* GARANTIZAR NO SCROLL HORIZONTAL */
+    /* EVITAR SCROLL INNECESARIO */
+    overflow-y: auto; /* Permitimos scroll si es necesario (pero intentaremos evitarlo con las demás reglas) */
     overflow-x: hidden; 
 }
 
-/* 2. GOOGLE MATERIAL ICONS */
+/* 2. GOOGLE MATERIAL ICONS (SIN CAMBIOS) */
 .material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
     font-style: normal;
-    font-size: 20px;  /* Tamaño del icono */
+    font-size: 20px; 
     display: inline-block;
     line-height: 1;
     text-transform: none;
@@ -76,14 +78,18 @@ body {
 /* 3. TÍTULO Y SOMBRA */
 h1 {
     font-family: 'Bebas Neue', cursive; 
-    text-align: center; margin: 0 0 2rem; font-size: 3em; letter-spacing: 2px; font-weight: 900;
+    text-align: center; 
+    /* TAMAÑO DEL TÍTULO EN VMIN para reducirlo en pantallas pequeñas */
+    font-size: max(3em, 8vmin); 
+    letter-spacing: 2px; 
+    font-weight: 900;
+    margin: 0 0 2vmin; /* Margen en VMIN */
     
     background: var(--color-line-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent; 
     background-clip: text;
     
-    /* SOMBRA DETRÁS DEL DISEÑO */
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.4)); 
     transition: all 0.3s;
 }
@@ -96,8 +102,13 @@ h1 {
 .container {
     width: calc(100% - 2 * var(--spacing)); 
     max-width: 450px; 
-    margin: 0 auto 2rem auto; 
-    padding: 2rem; 
+    
+    /* Usamos MAX-HEIGHT para limitar su tamaño en pantallas muy pequeñas */
+    /* Calculamos (100% de la altura - margen del botón - padding del body - altura del título - altura del footer) */
+    max-height: calc(100vh - 100px); /* Valor seguro para evitar overflow */
+
+    margin: 0 auto; 
+    padding: 2vmin; /* Padding interno también en VMIN/VMAX para escalabilidad */
     
     background: var(--color-card-bg);
     border-radius: 12px; 
@@ -107,9 +118,13 @@ h1 {
     position: relative;
     z-index: 10;
     transition: all 0.3s;
+    
+    /* Agregamos overflow-y: auto para que el contenido de la tarjeta pueda scrollear si NO cabe */
+    /* Pero la tarjeta en sí no saldrá de la pantalla */
+    overflow-y: auto; 
 }
 
-/* Inputs, Labels, HR... */
+/* Inputs, Labels, HR... (SIN CAMBIOS SIGNIFICATIVOS) */
 label { display: block; margin: 1rem 0 0.5rem; font-weight: bold; color: var(--color-text-dark); font-size: 1.1em; }
 .unidad { color: var(--color-text-light); font-weight: 400; font-size: 0.9em; }
 input[type="number"] { 
@@ -123,7 +138,7 @@ hr { border: 0; height: 1px; background: var(--color-line-gradient); margin: 1.5
 /* 5. FOOTER */
 footer {
     margin-top: 1rem; 
-    margin-bottom: var(--spacing);
+    margin-bottom: 2vmin; /* Usamos VMIN */
     width: 90%;
     max-width: 450px;
     text-align: center;
@@ -132,9 +147,7 @@ footer p { color: var(--color-text-dark); margin: 0; opacity: 0.7; transition: c
 @keyframes beat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.2); } }
 .heart-icon { color: var(--color-heart); animation: beat 0.8s infinite alternate; display: inline-block; margin: 0 3px; }
 
-/* ==================================== */
-/* 6. BOTÓN DE TEMA (Abajo Izquierda - Animación Dividida) */
-/* ==================================== */
+/* 6. BOTÓN DE TEMA (SIN CAMBIOS en la animación) */
 .theme-toggle {
     position: fixed; 
     bottom: var(--spacing); 
@@ -157,8 +170,6 @@ footer p { color: var(--color-text-dark); margin: 0; opacity: 0.7; transition: c
     transition: all 0.25s;
     left: 50%; 
 }
-
-/* Iconos de Modo Claro: Sol visible, Luna invisible */
 .theme-toggle > .material-icons[data-icon="sun"] { color: var(--btn-border-color); opacity: 1; } 
 .theme-toggle > span > .material-icons[data-icon="moon"] { color: var(--btn-icon-hover); opacity: 0; } 
 .hidden { opacity: 0 !important; } 
@@ -173,39 +184,21 @@ footer p { color: var(--color-text-dark); margin: 0; opacity: 0.7; transition: c
     transition: transform 0.3s ease-out;
     z-index: 1;
 }
-
-/* MITAD SUPERIOR: Entra de izquierda a derecha (L -> R) */
-.theme-toggle::before {
-    top: 0;
-    left: 0;
-    transform: translateX(-100%); 
-}
-
-/* MITAD INFERIOR: Entra de derecha a izquierda (R -> L) */
-.theme-toggle::after {
-    bottom: 0;
-    right: 0;
-    transform: translateX(100%);
-}
+.theme-toggle::before { top: 0; left: 0; transform: translateX(-100%); } 
+.theme-toggle::after { bottom: 0; right: 0; transform: translateX(100%); }
 
 /* ESTADO HOVER (Modo Claro) */
 .theme-toggle:hover { border-color: var(--btn-hover-fill); }
-
 .theme-toggle:hover::before { transform: translateX(0); } 
 .theme-toggle:hover::after { transform: translateX(0); }  
-
 .theme-toggle:hover > .material-icons[data-icon="sun"] { opacity: 0; } 
 .theme-toggle:hover > span > .material-icons[data-icon="moon"] { 
     opacity: 1;
-    /* ASEGURAMOS EL COLOR CLARO DE LA LUNA AL HACER HOVER SOBRE EL FONDO OSCURO */
     color: var(--btn-icon-hover); 
 } 
 
 
-/* ==================================== */
-/* 7. ESTILOS DEL MODO OSCURO (.dark-mode) */
-/* ==================================== */
-
+/* 7. ESTILOS DEL MODO OSCURO (SIN CAMBIOS) */
 body.dark-mode { background-color: var(--dark-bg); }
 .dark-mode .container { background: var(--dark-card-bg); border: 1px solid var(--dark-input-border); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); }
 .dark-mode input[type="number"] { background-color: var(--dark-card-bg); border: 1px solid var(--dark-input-border); color: var(--dark-text); box-shadow: none; }
@@ -214,23 +207,15 @@ body.dark-mode { background-color: var(--dark-bg); }
 .dark-mode input[disabled] { background-color: #202225; }
 .dark-mode footer p { color: var(--dark-text-subtle); }
 
-/* BOTÓN EN MODO OSCURO (Invertido) */
 .dark-mode .theme-toggle { border-color: var(--btn-icon-hover); }
-
-/* Modo Oscuro: Luna visible, Sol oculto */
 .dark-mode .theme-toggle > .material-icons[data-icon="sun"] { opacity: 0; } 
 .dark-mode .theme-toggle > span > .material-icons[data-icon="moon"] { opacity: 1 !important; color: var(--btn-icon-hover); } 
 
-/* Modo Oscuro: Relleno CLARO (Al inicio están visibles) */
-.dark-mode .theme-toggle::before, .dark-mode .theme-toggle::after {
-    background-color: var(--btn-icon-hover); 
-}
+.dark-mode .theme-toggle::before, .dark-mode .theme-toggle::after { background-color: var(--btn-icon-hover); }
 .dark-mode .theme-toggle::before { transform: translateX(0); } 
 .dark-mode .theme-toggle::after { transform: translateX(0); } 
 
-/* Modo oscuro: HOVER (Los rellenos CLAROS se van para mostrar el fondo oscuro) */
 .dark-mode .theme-toggle:hover { border-color: var(--btn-hover-fill); }
-
 .dark-mode .theme-toggle:hover::before { transform: translateX(-100%); } 
 .dark-mode .theme-toggle:hover::after { transform: translateX(100%); } 
 
@@ -238,9 +223,7 @@ body.dark-mode { background-color: var(--dark-bg); }
 .dark-mode .theme-toggle:hover > .material-icons[data-icon="sun"] { opacity: 1; color: var(--btn-hover-fill); } 
 
 
-/* ==================================== */
-/* 8. TRANSICIÓN DE ONDA */
-/* ==================================== */
+/* 8. TRANSICIÓN DE ONDA (SIN CAMBIOS) */
 #theme-transition {
     position: fixed;
     top: 0; left: 0; 
@@ -254,7 +237,7 @@ body.dark-mode { background-color: var(--dark-bg); }
 }
 
 
-/* MEDIA QUERY (Ajustes de espaciado para desktop) */
+/* MEDIA QUERY (SIN CAMBIOS) */
 @media (min-width: 600px) { 
     .theme-toggle {
         bottom: 2rem; 
