@@ -2,7 +2,7 @@
 :root {
     --color-background: #F8F8FF; 
     --color-metal-start: #b3e390; /* Verde metálico claro */
-    --color-metal-end: #3d884e;   /* Verde metálico oscuro */
+    --color-metal-end: #3d884e;   /* Verde metálico oscuro (Usado para la luna) */
     --color-line: #00bcd4;        /* Color del agua (Cian) */
     --color-accent: #FF7043;     
     --color-text-dark: #333333;
@@ -23,17 +23,19 @@ body {
     padding: 0;
     background-color: var(--color-background);
     min-height: 100vh; 
+    
     display: flex; 
     flex-direction: column; 
-    align-items: center;
-    /* Ajuste: Usamos padding para crear el espacio visible en los bordes */
+    align-items: center; 
+    justify-content: flex-start; 
+    
     padding: var(--spacing-mobile); 
-    box-sizing: border-box; /* Asegura que el padding no cause scroll */
+    box-sizing: border-box; 
+    /* Aseguramos que el body tenga el espacio para la tarjeta y el footer */
 }
 
 /* 1. ESTILO Y EFECTO METÁLICO DEL H1 */
 h1 {
-    /* Usar aquí 'Classy Marisa' o la fuente de estilo atrevido */
     font-family: 'Bebas Neue', cursive; 
     text-align: center;
     margin: 0 0 10px;
@@ -43,47 +45,84 @@ h1 {
     
     /* Efecto Verde Metalizado */
     background: linear-gradient(180deg, var(--color-metal-start) 0%, var(--color-metal-end) 100%);
-    
-    /* CORRECCIÓN: Usamos solo el prefijo -webkit- para esta técnica */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent; 
-    
-    background-clip: text; /* Mantenemos la versión estándar de background-clip */
-    /* text-fill-color: transparent; <-- ESTA LÍNEA ES LA QUE CAUSABA EL ERROR Y HA SIDO REMOVIDA */
-    
+    background-clip: text;
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15));
 }
 
-/* 2. ESTILO DE LA TARJETA (CONTAINER) */
+/* 2. ESTILO DE LA TARJETA (CONTAINER) - CORRECCIÓN DE VISIBILIDAD */
 .container {
-    /* CAMBIO: Ancho máximo ajustado para dejar espacio en los bordes */
     width: 100%; 
     max-width: 400px; 
-    margin: 10px 0; /* Espacio vertical reducido */
+    margin: 10px 0; 
     padding: 25px;
+    
+    /* Estilos de la tarjeta */
     background: linear-gradient(145deg, #ffffff, #f0f0f0);
     box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
     border-radius: 16px; 
+    
+    /* Ajuste de z-index para asegurar que esté visible sobre el body/fondo */
+    position: relative;
+    z-index: 10;
 }
 
-/* 3. ESTILOS DE LA LÍNEA SEPARADORA */
+/* Estilos para los inputs, labels, etc. (se mantienen) */
+.unidad {
+    color: var(--color-text-light); 
+    font-weight: 400;
+    font-size: 0.9em;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px; 
+    font-weight: bold;
+    color: var(--color-text-dark);
+    font-size: 1.1em;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px; 
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: all 0.3s;
+}
+
+input[disabled] {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+input:focus:not([disabled]) {
+    border-color: var(--color-metal-end); /* Usamos el verde oscuro para el foco */
+    box-shadow: 0 0 8px rgba(61, 136, 78, 0.4); 
+    background-color: #ffffff;
+    outline: none;
+}
+
 hr {
     border: 0;
-    height: 2px; /* Ligeramente más grueso */
-    background-color: var(--color-line); /* Verde agua más fuerte */
+    height: 2px; 
+    background-color: var(--color-line); 
     margin: 25px 0; 
 }
 
-/* 4. ESTILOS DEL FOOTER */
+/* 3. ESTILOS DEL FOOTER */
 footer {
-    /* CAMBIO: Se mantiene pegado al container en el flujo normal de la página */
-    margin-top: 10px; /* Separación del contenedor */
+    margin-top: 10px; 
     margin-bottom: 5px;
     padding: 10px 0;
     text-align: center;
     width: 100%;
     max-width: 400px;
     font-size: 0.9em;
+    /* Esto lo asegura debajo de la tarjeta en el flujo */
 }
 
 footer p {
@@ -105,48 +144,50 @@ footer p {
     margin: 0 3px;
 }
 
-/* 5. ESTILOS DEL BOTÓN DE CAMBIO DE TEMA (LUNA MENGUANTE) */
+/* 4. ESTILOS DEL BOTÓN DE CAMBIO DE TEMA (LUNA PURA) */
 .theme-toggle {
     position: fixed; 
     bottom: var(--spacing-mobile); 
     left: var(--spacing-mobile); 
     
-    /* CAMBIO: Forma de luna menguante */
     width: 50px; 
     height: 50px;
-    background: var(--color-background); /* Fondo de la página */
+    background: transparent; /* Sin fondo */
     border: none;
     cursor: pointer;
     box-shadow: none;
     transition: all 0.3s;
+    z-index: 1000;
     
-    /* Truco para la forma de Luna Menguante */
+    /* TRUCO LUNA MENGUANTE PURA (Sin fondo ni borde visible del botón) */
+    
+    /* El botón tiene un pseudo-elemento para crear la forma de la luna */
+    overflow: hidden; 
     border-radius: 50%;
-    outline: 2px solid var(--color-metal-end); /* Borde visible para la forma */
-    box-shadow: 0 0 0 5px var(--color-background) inset,
-                0 0 0 5px var(--color-metal-end);
 }
 
-.theme-toggle::after {
+.theme-toggle::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    
-    /* Media Luna: Mismo color del título metalizado */
-    background: var(--color-metal-end); 
     border-radius: 50%;
     
-    /* Oculta la mitad del círculo para simular la luna menguante */
-    transform: translateX(35%); 
+    /* El color de la luna es el verde oscuro metalizado */
+    background: var(--color-metal-end); 
+    
+    /* TRUCO: Creamos un "círculo de corte" del color del fondo */
+    box-shadow: 15px 0 0 0 var(--color-background) inset; 
+    
     transition: background-color 0.3s;
 }
 
-.theme-toggle:hover::after {
-    background: var(--color-metal-start);
+.theme-toggle:hover::before {
+    background: var(--color-metal-start); /* Cambia de color al pasar el ratón */
 }
+
 
 /* ==================================== */
 /* MEDIA QUERY (PARA PANTALLAS GRANDES - PCs) */
@@ -155,6 +196,7 @@ footer p {
     
     body {
         padding: var(--spacing-desktop);
+        justify-content: center; /* Centrado vertical en PC */
     }
     
     h1 {
@@ -162,18 +204,15 @@ footer p {
     }
 
     .container {
-        width: 100%;
-        max-width: 500px; /* Un poco más grande en PC si se necesita */
+        max-width: 500px; 
         padding: 40px; 
     }
     
-    /* Footer en PC: se mantiene debajo del container en el flujo */
     footer {
         max-width: 500px;
         font-size: 1em;
     }
     
-    /* Botón de tema en PC */
     .theme-toggle {
         bottom: var(--spacing-desktop); 
         left: var(--spacing-desktop);
