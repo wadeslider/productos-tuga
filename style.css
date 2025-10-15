@@ -1,24 +1,28 @@
-/* Estilos CSS para el cuerpo y el contenedor */
+/* ==================================== */
+/* ESTILOS BASE (MÓVIL PRIMERO)        */
+/* ==================================== */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0; /* Eliminamos el margen base en móviles */
     padding: 0;
     background-color: #f4f4f9;
 }
 
 .container {
-    max-width: 450px; /* Un poco más ancho */
-    margin: 50px auto;
-    padding: 25px;
+    max-width: 100%; /* Ocupa el 100% del ancho en pantallas pequeñas */
+    margin: 0; /* Eliminamos el margen automático en móviles */
+    padding: 20px;
     background-color: #fff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Sombra más pronunciada */
-    border-radius: 10px;
+    box-shadow: none; /* Sin sombra en móviles para evitar artefactos */
+    border-radius: 0; /* Sin bordes redondeados en móviles */
+    min-height: 100vh; /* Ocupa toda la altura visible en móviles */
 }
 
 h1 {
     color: #333;
     text-align: center;
     margin-bottom: 20px;
+    font-size: 1.8em; /* Tamaño de título adecuado para móvil */
 }
 
 /* Estilos para las etiquetas y campos de entrada */
@@ -27,6 +31,7 @@ label {
     margin: 15px 0 5px;
     font-weight: bold;
     color: #555;
+    font-size: 1em;
 }
 
 input[type="number"] {
@@ -35,7 +40,7 @@ input[type="number"] {
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 6px;
-    box-sizing: border-box; 
+    box-sizing: border-box;
     font-size: 1.1em;
 }
 
@@ -56,14 +61,43 @@ hr {
 .resultado {
     margin-top: 30px;
     padding: 15px;
-    border-top: 2px solid #00796b; /* Un borde distintivo */
+    border-top: 2px solid #00796b;
     text-align: center;
 }
 
 .resultado #mensajeResultado {
-    font-size: 1.3em;
+    font-size: 1.2em; /* Ligeramente más pequeño en móvil */
     font-weight: bold;
     color: #00796b;
     margin: 0;
     padding: 5px 0;
+}
+
+
+/* ==================================== */
+/* MEDIA QUERY (PARA PANTALLAS GRANDES - PCs) */
+/* ==================================== */
+@media (min-width: 600px) {
+    
+    body {
+        margin: 20px; /* Restauramos un margen en PC */
+    }
+
+    .container {
+        max-width: 450px; /* Limitamos el ancho para centrar el contenido */
+        margin: 50px auto; /* Centramos el contenedor */
+        padding: 30px; /* Más padding interno */
+        background-color: #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Añadimos la sombra */
+        border-radius: 10px; /* Añadimos bordes redondeados */
+        min-height: auto; /* Quitamos la altura mínima de la pantalla */
+    }
+
+    h1 {
+        font-size: 2em; /* Hacemos el título un poco más grande */
+    }
+
+    .resultado #mensajeResultado {
+        font-size: 1.5em; /* Hacemos el resultado más grande */
+    }
 }
