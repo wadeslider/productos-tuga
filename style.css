@@ -2,12 +2,16 @@
 :root {
     --color-background: #F8F8FF; 
     --color-metal-start: #b3e390; /* Verde metálico claro */
-    --color-metal-end: #3d884e;   /* Verde metálico oscuro (Usado para la luna) */
-    --color-line: #00bcd4;        /* Color del agua (Cian) */
+    --color-metal-end: #3d884e;   /* Verde metálico oscuro */
+    --color-line-gradient: linear-gradient(90deg, var(--color-metal-start), var(--color-metal-end)); 
     --color-accent: #FF7043;     
     --color-text-dark: #333333;
     --color-text-light: #B0BEC5; 
-    --color-heart: #FF0000;      /* Rojo puro */
+    --color-heart: #FF0000;      
+    
+    /* Colores para el botón de tema */
+    --btn-normal-color: #ffffff; /* Color normal: Blanco */
+    --btn-hover-color: #1e2124;  /* Color hover: Negro Oscuro */
 
     /* Espaciado responsivo para bordes */
     --spacing-mobile: 4vmin;
@@ -27,11 +31,10 @@ body {
     display: flex; 
     flex-direction: column; 
     align-items: center; 
-    justify-content: flex-start; 
+    justify-content: flex-start; /* Alinea arriba en el móvil */
     
     padding: var(--spacing-mobile); 
     box-sizing: border-box; 
-    /* Aseguramos que el body tenga el espacio para la tarjeta y el footer */
 }
 
 /* 1. ESTILO Y EFECTO METÁLICO DEL H1 */
@@ -44,31 +47,29 @@ h1 {
     font-weight: 900;
     
     /* Efecto Verde Metalizado */
-    background: linear-gradient(180deg, var(--color-metal-start) 0%, var(--color-metal-end) 100%);
+    background: var(--color-line-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent; 
     background-clip: text;
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15));
 }
 
-/* 2. ESTILO DE LA TARJETA (CONTAINER) - CORRECCIÓN DE VISIBILIDAD */
+/* 2. ESTILO DE LA TARJETA (CONTAINER) */
 .container {
     width: 100%; 
     max-width: 400px; 
     margin: 10px 0; 
     padding: 25px;
     
-    /* Estilos de la tarjeta */
     background: linear-gradient(145deg, #ffffff, #f0f0f0);
     box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
     border-radius: 16px; 
     
-    /* Ajuste de z-index para asegurar que esté visible sobre el body/fondo */
     position: relative;
     z-index: 10;
 }
 
-/* Estilos para los inputs, labels, etc. (se mantienen) */
+/* Estilos de inputs y labels */
 .unidad {
     color: var(--color-text-light); 
     font-weight: 400;
@@ -100,20 +101,22 @@ input[disabled] {
 }
 
 input:focus:not([disabled]) {
-    border-color: var(--color-metal-end); /* Usamos el verde oscuro para el foco */
+    border-color: var(--color-metal-end); 
     box-shadow: 0 0 8px rgba(61, 136, 78, 0.4); 
     background-color: #ffffff;
     outline: none;
 }
 
+/* 3. LÍNEA HR CON DEGRADADO DEL TÍTULO */
 hr {
     border: 0;
     height: 2px; 
-    background-color: var(--color-line); 
+    background: var(--color-line-gradient); /* Aplicación del degradado */
     margin: 25px 0; 
+    border-radius: 1px;
 }
 
-/* 3. ESTILOS DEL FOOTER */
+/* 4. FOOTER Y CORAZÓN */
 footer {
     margin-top: 10px; 
     margin-bottom: 5px;
@@ -122,7 +125,6 @@ footer {
     width: 100%;
     max-width: 400px;
     font-size: 0.9em;
-    /* Esto lo asegura debajo de la tarjeta en el flujo */
 }
 
 footer p {
@@ -144,7 +146,7 @@ footer p {
     margin: 0 3px;
 }
 
-/* 4. ESTILOS DEL BOTÓN DE CAMBIO DE TEMA (LUNA PURA) */
+/* 5. BOTÓN DE CAMBIO DE TEMA (Font Awesome con animación SCSS) */
 .theme-toggle {
     position: fixed; 
     bottom: var(--spacing-mobile); 
@@ -152,40 +154,84 @@ footer p {
     
     width: 50px; 
     height: 50px;
-    background: transparent; /* Sin fondo */
-    border: none;
+    border-radius: 50%; 
+    background: transparent;
+    color: var(--btn-normal-color); 
+    overflow: hidden;
+    padding: 0;
     cursor: pointer;
-    box-shadow: none;
-    transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: box-shadow 0.25s;
     z-index: 1000;
-    
-    /* TRUCO LUNA MENGUANTE PURA (Sin fondo ni borde visible del botón) */
-    
-    /* El botón tiene un pseudo-elemento para crear la forma de la luna */
-    overflow: hidden; 
-    border-radius: 50%;
 }
 
-.theme-toggle::before {
-    content: '';
+/* Estilo y posición base de los iconos */
+.theme-toggle i {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    
-    /* El color de la luna es el verde oscuro metalizado */
-    background: var(--color-metal-end); 
-    
-    /* TRUCO: Creamos un "círculo de corte" del color del fondo */
-    box-shadow: 15px 0 0 0 var(--color-background) inset; 
-    
-    transition: background-color 0.3s;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    font-size: 1.5em;
+    transition: all 0.25s;
 }
 
-.theme-toggle:hover::before {
-    background: var(--color-metal-start); /* Cambia de color al pasar el ratón */
+/* 5.1 Icono de LUNA (Por defecto) */
+.theme-toggle > .fa-moon {
+    color: var(--color-text-dark); 
+}
+
+/* 5.2 Icono de SOL (Dentro del SPAN, preparado para el hover) */
+.theme-toggle > span > .fa-sun {
+    color: white; 
+    opacity: 0;
+}
+
+/* Pseudo-elementos de la animación de hover */
+.theme-toggle::after,
+.theme-toggle > span::after {
+    width: 100%;
+    height: 50%;
+    position: absolute;
+    left: 0;
+    background-color: var(--btn-hover-color); /* #1e2124 */
+    transition: transform 0.25s;
+    content: "";
+    z-index: 1;
+}
+
+.theme-toggle::after { /* MITAD SUPERIOR */
+    top: 0;
+    transform: translate(-100%, 0);
+}
+
+.theme-toggle > span { 
+    position: relative;
+    z-index: 2;
+}
+
+.theme-toggle > span::after { /* MITAD INFERIOR */
+    bottom: 0;
+    transform: translate(100%, 0);
+    content: "";
+}
+
+/* ESTADO HOVER */
+.theme-toggle:hover {
+    box-shadow: 0 4px 15px rgba(30, 33, 36, 0.4);
+}
+
+.theme-toggle:hover > .fa-moon { /* Oculta la luna */
+    opacity: 0;
+}
+
+.theme-toggle:hover > span > .fa-sun { /* Muestra el sol */
+    opacity: 1;
+}
+
+.theme-toggle:hover::after,
+.theme-toggle:hover > span::after {
+    transform: translate(0, 0); /* Mueve las mitades para rellenar */
 }
 
 
