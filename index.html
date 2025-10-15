@@ -16,7 +16,7 @@
 
     <h1 id="mainTitle">Las mascotas de Tuga</h1>
 
-    <div class="container">
+    <div class="container new-card">
         
         <label for="precioKilo">
             Precio por Kilogramo <span class="unidad">($/kg)</span>:
@@ -38,9 +38,9 @@
     </div>
     
     <button id="themeToggle" class="theme-toggle" aria-label="Cambiar tema">
-        <i class="fas fa-moon"></i> 
+        <i class="fas fa-moon" data-icon="moon"></i> 
         <span>
-            <i class="fas fa-sun"></i>
+            <i class="fas fa-sun" data-icon="sun"></i>
         </span>
     </button>
     
@@ -51,6 +51,8 @@
             by WadeSlider
         </p>
     </footer>
+
+    <div id="theme-transition"></div>
 
     <script src="script.js"></script>
 

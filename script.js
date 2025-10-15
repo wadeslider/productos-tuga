@@ -1,6 +1,5 @@
 /**
  * Se llama al modificar el campo de Precio por Kilogramo.
- * Habilita/Deshabilita los campos de Peso y Precio Deseado.
  */
 function validarPrecioKilo() {
     const precioKiloInput = document.getElementById('precioKilo');
@@ -11,17 +10,14 @@ function validarPrecioKilo() {
 
     const esValido = !isNaN(precioPorKilo) && precioPorKilo > 0;
 
-    // Habilitar o deshabilitar los campos de abajo
     pesoGramosInput.disabled = !esValido;
     precioDeseadoInput.disabled = !esValido;
 
-    // Si se invalida el precio por kilo, limpiamos los campos de cálculo
     if (!esValido) {
         pesoGramosInput.value = '';
         precioDeseadoInput.value = '';
     }
     
-    // Si ya es válido, podemos llamar a 'calcular' para recalcular en caso de que ya hubiera valores
     if (esValido) {
         if (precioDeseadoInput.value) {
             calcular(precioDeseadoInput);
@@ -33,8 +29,7 @@ function validarPrecioKilo() {
 
 
 /**
- * Función principal de cálculo. Se activa al modificar cualquiera de los dos campos (gramos o precio).
- * @param {HTMLInputElement} elemento El campo de entrada que ha sido modificado (this).
+ * Función principal de cálculo.
  */
 function calcular(elemento) {
     const precioKiloInput = document.getElementById('precioKilo');
@@ -43,58 +38,80 @@ function calcular(elemento) {
 
     const precioPorKilo = parseFloat(precioKiloInput.value);
 
-    if (isNaN(precioPorKilo) || precioPorKilo <= 0) {
-        pesoGramosInput.value = '';
-        precioDeseadoInput.value = '';
-        return; 
-    }
+    if (isNaN(precioPorKilo) || precioPorKilo <= 0) { return; }
 
     const idModificado = elemento.id;
 
     if (idModificado === 'precioDeseado') {
         const precioDeseado = parseFloat(elemento.value);
-        if (isNaN(precioDeseado) || precioDeseado < 0) {
-            pesoGramosInput.value = '';
-            return;
-        }
-
+        if (isNaN(precioDeseado) || precioDeseado < 0) { pesoGramosInput.value = ''; return; }
         const gramosFinal = (precioDeseado / precioPorKilo) * 1000;
         pesoGramosInput.value = gramosFinal.toFixed(0);
 
     } else if (idModificado === 'pesoGramos') {
         const pesoEnGramos = parseFloat(elemento.value);
-        if (isNaN(pesoEnGramos) || pesoEnGramos < 0) {
-            precioDeseadoInput.value = '';
-            return;
-        }
-        
+        if (isNaN(pesoEnGramos) || pesoEnGramos < 0) { precioDeseadoInput.value = ''; return; }
         const precioFinal = (pesoEnGramos / 1000) * precioPorKilo;
         precioDeseadoInput.value = precioFinal.toFixed(2);
     }
 }
 
 /**
- * Función para alternar el modo oscuro y cambiar el icono del botón.
+ * Función para alternar el modo oscuro con transición de onda expansiva.
  */
-function toggleTheme() {
+function toggleTheme(event) {
     const body = document.body;
-    const themeToggle = document.getElementById('themeToggle');
-    // Alterna la clase y devuelve true si se añadió (dark-mode activado)
-    const isDarkMode = body.classList.toggle('dark-mode'); 
+    const isDarkMode = body.classList.contains('dark-mode');
+    const transitionElement = document.getElementById('theme-transition');
+    
+    // 1. Configurar el color y la posición de inicio de la onda
+    const nextThemeColor = isDarkMode ? getComputedStyle(body).getPropertyValue('--color-background') : getComputedStyle(body).getPropertyValue('--dark-bg');
+    transitionElement.style.backgroundColor = nextThemeColor;
+    
+    const rect = event.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    transitionElement.style.left = `${centerX}px`;
+    transitionElement.style.top = `${centerY}px`;
+    
+    // 2. Ejecutar la expansión (transform: scale)
+    transitionElement.style.transform = 'scale(0)';
+    transitionElement.classList.add('active'); // Clase temporal para asegurar la transición
 
-    // Obtener los iconos (usando selectores específicos para evitar conflicto con span)
-    const moonIcon = themeToggle.querySelector('.fa-moon');
-    const sunIcon = themeToggle.querySelector('.fa-sun');
+    // Asegurar que la escala sea 0 antes de iniciar
+    requestAnimationFrame(() => {
+        // Calcular el radio para cubrir toda la pantalla (diagonal)
+        const diagonal = Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2);
+        const scaleFactor = diagonal / transitionElement.offsetWidth;
+        
+        transitionElement.style.transform = `scale(${scaleFactor * 2})`; // Escala suficiente
+    });
+    
+    // 3. Cambiar el tema después de un retraso
+    setTimeout(() => {
+        body.classList.toggle('dark-mode');
+        // Alternar íconos
+        const moonIcon = document.querySelector('.fa-moon');
+        const sunIcon = document.querySelector('.fa-sun');
 
-    if (isDarkMode) {
-        // En modo oscuro, el ícono activo es el SOL
-        moonIcon.classList.add('hidden');
-        sunIcon.classList.remove('hidden');
-    } else {
-        // En modo claro, el ícono activo es la LUNA
-        moonIcon.classList.remove('hidden');
-        sunIcon.classList.add('hidden');
-    }
+        if (body.classList.contains('dark-mode')) {
+            moonIcon.classList.add('hidden');
+            sunIcon.classList.remove('hidden');
+        } else {
+            moonIcon.classList.remove('hidden');
+            sunIcon.classList.add('hidden');
+        }
+
+    }, 300); // 300ms antes de cambiar el tema (la transición dura 600ms)
+
+    // 4. Resetear la transición después de que termine
+    setTimeout(() => {
+        transitionElement.style.transform = 'scale(0)';
+        transitionElement.classList.remove('active');
+        transitionElement.style.left = ''; // Limpiar posición
+        transitionElement.style.top = ''; // Limpiar posición
+    }, 700); // Resetear 700ms después de iniciar
 }
 
 
