@@ -1,0 +1,59 @@
+/* Estilos CSS para el cuerpo y el contenedor */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+
+.container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+/* Estilos para las etiquetas y campos de entrada */
+label {
+    display: block;
+    margin: 15px 0 5px;
+    font-weight: bold;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Incluye padding en el width */
+}
+
+/* Estilos para el área de resultados */
+.resultado {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #e0f7fa;
+    border: 1px solid #b2ebf2;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.resultado p {
+    font-size: 1.1em;
+    margin: 5px 0;
+}
+
+/* Estilo específico para el precio final */
+.resultado #precioFinal {
+    font-size: 1.5em;
+    color: #00796b;
+    font-weight: bold;
+}
