@@ -1,15 +1,21 @@
 /* PALETA DE COLORES */
 :root {
-    --color-background: #F8F8FF; /* Blanco suave (Ghost White) */
-    --color-primary: #4CAF50;    /* Verde (Nature/Health) */
-    --color-secondary: #00BCD4;  /* Cian (Freshness/Trust) */
-    --color-accent: #FF7043;     /* Naranja Coral (Energy/Interaction) */
+    --color-background: #F8F8FF; 
+    --color-metal-start: #b3e390; /* Verde metálico claro */
+    --color-metal-end: #3d884e;   /* Verde metálico oscuro */
+    --color-line: #00bcd4;        /* Color del agua (Cian) */
+    --color-accent: #FF7043;     
     --color-text-dark: #333333;
-    --color-text-light: #B0BEC5; /* Gris suave */
+    --color-text-light: #B0BEC5; 
+    --color-heart: #FF0000;      /* Rojo puro */
+
+    /* Espaciado responsivo para bordes */
+    --spacing-mobile: 4vmin;
+    --spacing-desktop: 20px;
 }
 
 /* ==================================== */
-/* DISTRIBUCIÓN Y ESTILOS GLOBALES (MÓVIL PRIMERO) */
+/* DISTRIBUCIÓN Y ESTILOS GLOBALES      */
 /* ==================================== */
 body {
     font-family: 'Arial', sans-serif;
@@ -17,117 +23,125 @@ body {
     padding: 0;
     background-color: var(--color-background);
     min-height: 100vh; 
-    
-    /* SOLUCIÓN AL PROBLEMA DE DISTRIBUCIÓN MÓVIL: */
     display: flex; 
-    flex-direction: column; /* Apila todos los elementos (H1, container, footer) verticalmente */
-    align-items: center; /* Centrado horizontal */
-    justify-content: flex-start; /* Alinea los elementos desde la parte superior */
+    flex-direction: column; 
+    align-items: center;
+    /* Ajuste: Usamos padding para crear el espacio visible en los bordes */
+    padding: var(--spacing-mobile); 
+    box-sizing: border-box; /* Asegura que el padding no cause scroll */
 }
 
-/* Estilos del H1 (Título principal) */
+/* 1. ESTILO Y EFECTO METÁLICO DEL H1 */
 h1 {
-    color: var(--color-primary);
+    /* Usar aquí 'Classy Marisa' o la fuente de estilo atrevido */
+    font-family: 'Bebas Neue', cursive; 
     text-align: center;
-    margin: 30px 20px 20px;
-    font-size: 2em; 
-    letter-spacing: 0.5px;
-    font-weight: 700;
-    border-bottom: 2px solid var(--color-secondary); /* Línea decorativa */
-    padding-bottom: 5px;
+    margin: 0 0 10px; /* Reducción de margen para centrar mejor */
+    font-size: 3em; 
+    letter-spacing: 2px;
+    font-weight: 900;
+    
+    /* Efecto Verde Metalizado (Key CSS for Metallic Look) */
+    background: linear-gradient(180deg, var(--color-metal-start) 0%, var(--color-metal-end) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15)); /* Sombra para resaltar */
 }
 
+/* 2. ESTILO DE LA TARJETA (CONTAINER) */
 .container {
-    width: 90%; 
-    max-width: 420px; /* Ancho máximo ligeramente mayor */
-    margin: 10px auto 30px; 
+    /* CAMBIO: Ancho máximo ajustado para dejar espacio en los bordes */
+    width: 100%; 
+    max-width: 400px; 
+    margin: 10px 0; /* Espacio vertical reducido */
     padding: 25px;
-    background: linear-gradient(145deg, #ffffff, #f0f0f0); /* Fondo con ligero degradado */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Sombra más suave y extendida */
-    border-radius: 16px; /* Esquinas más redondeadas */
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    border-radius: 16px; 
 }
 
-/* Estilos para las etiquetas y campos de entrada */
-label {
-    display: block;
-    margin: 15px 0 5px; 
-    font-weight: 600; /* Un poco más de peso */
-    color: var(--color-text-dark);
-    font-size: 1.1em;
-}
-
-.unidad {
-    color: var(--color-text-light); 
-    font-weight: 400;
-    font-size: 0.9em;
-}
-
-input[type="number"] {
-    width: 100%;
-    padding: 15px 10px; /* Más padding para que se vean más grandes */
-    margin-bottom: 15px; 
-    border: 2px solid #e0e0e0; /* Borde más sutil */
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 1.2em; /* Texto más grande para mejor lectura */
-    transition: all 0.3s;
-}
-
-input[disabled] {
-    background-color: #f0f0f0;
-    cursor: not-allowed;
-}
-
-/* Resaltado de enfoque con color principal */
-input:focus:not([disabled]) {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 8px rgba(76, 175, 80, 0.4); 
-    background-color: #ffffff;
-    outline: none;
-}
-
+/* 3. ESTILOS DE LA LÍNEA SEPARADORA */
 hr {
     border: 0;
-    height: 1px;
-    background: var(--color-secondary);
+    height: 2px; /* Ligeramente más grueso */
+    background-color: var(--color-line); /* Verde agua más fuerte */
     margin: 25px 0; 
 }
 
-/* Estilos del Footer */
+/* 4. ESTILOS DEL FOOTER */
 footer {
+    /* CAMBIO: Se mantiene pegado al container en el flujo normal de la página */
+    margin-top: 10px; /* Separación del contenedor */
+    margin-bottom: 5px;
     padding: 10px 0;
     text-align: center;
     width: 100%;
-    margin-top: auto; /* Empuja el footer hacia el final en la columna flex */
+    max-width: 400px;
+    font-size: 0.9em;
 }
 
 footer p {
-    font-size: 0.9em;
     color: var(--color-text-dark);
     margin: 0;
-    opacity: 0.6;
+    opacity: 0.7;
 }
 
-/* Estilos del Botón de Cambio de Tema (Ahora usa el color de acento) */
+/* Animación del Corazón */
+@keyframes beat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.15); }
+}
+
+.heart-icon {
+    color: var(--color-heart);
+    animation: beat 1s infinite;
+    display: inline-block;
+    margin: 0 3px;
+}
+
+/* 5. ESTILOS DEL BOTÓN DE CAMBIO DE TEMA (LUNA MENGUANTE) */
 .theme-toggle {
     position: fixed; 
-    bottom: 20px; 
-    left: 20px; 
-    background-color: var(--color-accent); /* Naranja coral */
-    color: white;
-    border: none;
-    border-radius: 50%; 
-    width: 50px; /* Más grande */
+    bottom: var(--spacing-mobile); 
+    left: var(--spacing-mobile); 
+    
+    /* CAMBIO: Forma de luna menguante */
+    width: 50px; 
     height: 50px;
-    font-size: 1.5em;
+    background: var(--color-background); /* Fondo de la página */
+    border: none;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    transition: background-color 0.3s, transform 0.1s;
-    z-index: 1000;
+    box-shadow: none;
+    transition: all 0.3s;
+    
+    /* Truco para la forma de Luna Menguante */
+    border-radius: 50%;
+    outline: 2px solid var(--color-metal-end); /* Borde visible para la forma */
+    box-shadow: 0 0 0 5px var(--color-background) inset,
+                0 0 0 5px var(--color-metal-end);
 }
 
-.theme-toggle:hover {
-    background-color: #FF5722; /* Tono más oscuro al pasar el ratón */
+.theme-toggle::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Media Luna: Mismo color del título metalizado */
+    background: var(--color-metal-end); 
+    border-radius: 50%;
+    
+    /* Oculta la mitad del círculo para simular la luna menguante */
+    transform: translateX(35%); 
+    transition: background-color 0.3s;
+}
+
+.theme-toggle:hover::after {
+    background: var(--color-metal-start);
 }
 
 /* ==================================== */
@@ -136,23 +150,28 @@ footer p {
 @media (min-width: 600px) {
     
     body {
-        /* Centrado completo del contenido en pantallas grandes */
-        justify-content: center; 
+        padding: var(--spacing-desktop);
     }
     
     h1 {
-        font-size: 2.8em; 
+        font-size: 4em; 
     }
 
     .container {
+        width: 100%;
+        max-width: 500px; /* Un poco más grande en PC si se necesita */
         padding: 40px; 
-        box-shadow: 0 15px 35px rgba(0,0,0,0.15); /* Sombra más pronunciada en PC */
     }
     
-    /* Alineación de footer en PC (Vuelve a ser absoluto) */
+    /* Footer en PC: se mantiene debajo del container en el flujo */
     footer {
-        position: absolute;
-        bottom: 10px;
-        width: auto;
+        max-width: 500px;
+        font-size: 1em;
+    }
+    
+    /* Botón de tema en PC */
+    .theme-toggle {
+        bottom: var(--spacing-desktop); 
+        left: var(--spacing-desktop);
     }
 }
