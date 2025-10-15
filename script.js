@@ -97,7 +97,7 @@ function toggleTheme(event) {
     transitionElement.style.transform = 'scale(0)';
 
     requestAnimationFrame(() => {
-        // Calcular la distancia a la esquina más lejana desde el centro del botón (Top Right)
+        // Calcular la distancia a la esquina más lejana desde el centro del botón (Bottom Left)
         const distanceToFarCorner = Math.sqrt(
             Math.max(centerX, window.innerWidth - centerX) ** 2 + 
             Math.max(centerY, window.innerHeight - centerY) ** 2
