@@ -1,17 +1,30 @@
 /* PALETA DE COLORES */
 :root {
+    /* Tema Claro */
     --color-background: #F8F8FF; 
-    --color-metal-start: #b3e390; /* Verde metálico claro */
-    --color-metal-end: #3d884e;   /* Verde metálico oscuro */
-    --color-line-gradient: linear-gradient(90deg, var(--color-metal-start), var(--color-metal-end)); 
-    --color-accent: #FF7043;     
     --color-text-dark: #333333;
     --color-text-light: #B0BEC5; 
+    --color-card-bg: #ffffff;
+    --color-card-shadow: rgba(0,0,0,0.1);
+    --color-input-border: #e0e0e0;
+    --color-input-disabled: #f0f0f0;
+    
+    /* Tema Oscuro (Discord Style) */
+    --dark-bg: #36393f; 
+    --dark-card-bg: #2f3136; 
+    --dark-text: #f6f6f7; 
+    --dark-text-subtle: #96989d; 
+    --dark-input-border: #40444b; 
+    
+    /* Acentos (Ambos temas) */
+    --color-metal-start: #8BC34A; /* CAMBIO: Verde más fuerte (Lima) */
+    --color-metal-end: #3d884e;   /* Verde metálico oscuro */
+    --color-line-gradient: linear-gradient(90deg, var(--color-metal-start), var(--color-metal-end)); 
     --color-heart: #FF0000;      
     
-    /* Colores para el botón de tema */
-    --btn-normal-color: #ffffff; /* Color normal: Blanco */
-    --btn-hover-color: #1e2124;  /* Color hover: Negro Oscuro */
+    /* Colores del Botón de Tema */
+    --btn-border-color: var(--dark-bg); 
+    --btn-hover-fill: var(--dark-bg);   
 
     /* Espaciado responsivo para bordes */
     --spacing-mobile: 4vmin;
@@ -25,16 +38,17 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0; 
     padding: 0;
-    background-color: var(--color-background);
+    background-color: var(--color-background); 
     min-height: 100vh; 
     
     display: flex; 
     flex-direction: column; 
     align-items: center; 
-    justify-content: flex-start; /* Alinea arriba en el móvil */
+    justify-content: flex-start; 
     
     padding: var(--spacing-mobile); 
     box-sizing: border-box; 
+    transition: background-color 0.3s; 
 }
 
 /* 1. ESTILO Y EFECTO METÁLICO DEL H1 */
@@ -51,7 +65,12 @@ h1 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent; 
     background-clip: text;
+    
+    /* CAMBIO: Sombra del título para darle más volumen */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4); 
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15));
+    
+    transition: filter 0.3s;
 }
 
 /* 2. ESTILO DE LA TARJETA (CONTAINER) */
@@ -61,34 +80,24 @@ h1 {
     margin: 10px 0; 
     padding: 25px;
     
-    background: linear-gradient(145deg, #ffffff, #f0f0f0);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    background: linear-gradient(145deg, var(--color-card-bg), #f0f0f0);
+    box-shadow: 0 10px 25px var(--color-card-shadow); 
     border-radius: 16px; 
     
     position: relative;
     z-index: 10;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 /* Estilos de inputs y labels */
-.unidad {
-    color: var(--color-text-light); 
-    font-weight: 400;
-    font-size: 0.9em;
-}
-
-label {
-    display: block;
-    margin: 10px 0 5px; 
-    font-weight: bold;
-    color: var(--color-text-dark);
-    font-size: 1.1em;
-}
+label { color: var(--color-text-dark); transition: color 0.3s; }
+.unidad { color: var(--color-text-light); transition: color 0.3s; }
 
 input[type="number"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px; 
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--color-input-border); 
     border-radius: 8px;
     box-sizing: border-box;
     font-size: 1em;
@@ -96,14 +105,14 @@ input[type="number"] {
 }
 
 input[disabled] {
-    background-color: #f0f0f0;
+    background-color: var(--color-input-disabled); 
     cursor: not-allowed;
 }
 
 input:focus:not([disabled]) {
     border-color: var(--color-metal-end); 
     box-shadow: 0 0 8px rgba(61, 136, 78, 0.4); 
-    background-color: #ffffff;
+    background-color: var(--color-card-bg); 
     outline: none;
 }
 
@@ -111,7 +120,7 @@ input:focus:not([disabled]) {
 hr {
     border: 0;
     height: 2px; 
-    background: var(--color-line-gradient); /* Aplicación del degradado */
+    background: var(--color-line-gradient); 
     margin: 25px 0; 
     border-radius: 1px;
 }
@@ -131,9 +140,9 @@ footer p {
     color: var(--color-text-dark);
     margin: 0;
     opacity: 0.7;
+    transition: color 0.3s;
 }
 
-/* Animación del Corazón */
 @keyframes beat {
     0%, 100% { transform: scale(1); }
     15% { transform: scale(1.15); }
@@ -146,22 +155,23 @@ footer p {
     margin: 0 3px;
 }
 
-/* 5. BOTÓN DE CAMBIO DE TEMA (Font Awesome con animación SCSS) */
+/* 5. BOTÓN DE CAMBIO DE TEMA (RECTANGULAR Y ANIMADO) */
 .theme-toggle {
     position: fixed; 
     bottom: var(--spacing-mobile); 
     left: var(--spacing-mobile); 
     
-    width: 50px; 
-    height: 50px;
-    border-radius: 50%; 
+    width: 120px; 
+    height: 40px; 
+    border-radius: 6px; 
+    
     background: transparent;
-    color: var(--btn-normal-color); 
+    border: 2px solid var(--btn-border-color); 
     overflow: hidden;
     padding: 0;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: box-shadow 0.25s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.25s;
     z-index: 1000;
 }
 
@@ -169,80 +179,130 @@ footer p {
 .theme-toggle i {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    font-size: 1.5em;
-    transition: all 0.25s;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    z-index: 3;
+    transition: color 0.25s, opacity 0.25s;
 }
 
-/* 5.1 Icono de LUNA (Por defecto) */
+/* Icono de LUNA (Modo Claro) */
 .theme-toggle > .fa-moon {
-    color: var(--color-text-dark); 
+    left: 10px; 
+    color: var(--btn-border-color); 
 }
 
-/* 5.2 Icono de SOL (Dentro del SPAN, preparado para el hover) */
+/* Icono de SOL (Modo Oscuro/Hover) */
 .theme-toggle > span > .fa-sun {
+    right: 10px; 
+    left: auto;
     color: white; 
-    opacity: 0;
 }
+.hidden { opacity: 0 !important; visibility: hidden; }
+
 
 /* Pseudo-elementos de la animación de hover */
-.theme-toggle::after,
-.theme-toggle > span::after {
-    width: 100%;
-    height: 50%;
-    position: absolute;
-    left: 0;
-    background-color: var(--btn-hover-color); /* #1e2124 */
-    transition: transform 0.25s;
-    content: "";
-    z-index: 1;
-}
-
-.theme-toggle::after { /* MITAD SUPERIOR */
-    top: 0;
-    transform: translate(-100%, 0);
-}
-
 .theme-toggle > span { 
     position: relative;
     z-index: 2;
+    display: block; 
+    width: 100%;
+    height: 100%;
 }
 
-.theme-toggle > span::after { /* MITAD INFERIOR */
-    bottom: 0;
-    transform: translate(100%, 0);
+.theme-toggle::after,
+.theme-toggle > span::after {
+    width: 50%; 
+    height: 100%; 
+    position: absolute;
+    background-color: var(--btn-hover-fill); 
+    transition: transform 0.25s ease-out; 
     content: "";
+    z-index: 1;
+    top: 0;
+}
+
+.theme-toggle::after { /* MITAD IZQUIERDA */
+    left: 0;
+    transform: translateX(-100%); 
+}
+
+.theme-toggle > span::after { /* MITAD DERECHA */
+    right: 0;
+    left: auto; 
+    transform: translateX(100%); 
 }
 
 /* ESTADO HOVER */
 .theme-toggle:hover {
-    box-shadow: 0 4px 15px rgba(30, 33, 36, 0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    border-color: var(--btn-hover-fill);
 }
 
-.theme-toggle:hover > .fa-moon { /* Oculta la luna */
-    opacity: 0;
+.theme-toggle:hover::after {
+    transform: translateX(0); 
 }
 
-.theme-toggle:hover > span > .fa-sun { /* Muestra el sol */
-    opacity: 1;
-}
-
-.theme-toggle:hover::after,
 .theme-toggle:hover > span::after {
-    transform: translate(0, 0); /* Mueve las mitades para rellenar */
+    transform: translateX(0); 
 }
 
 
 /* ==================================== */
-/* MEDIA QUERY (PARA PANTALLAS GRANDES - PCs) */
+/* ESTILOS DEL MODO OSCURO (.dark-mode) */
 /* ==================================== */
+
+body.dark-mode {
+    background-color: var(--dark-bg);
+}
+
+.dark-mode .container {
+    background: var(--dark-card-bg);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); 
+}
+
+.dark-mode label { color: var(--dark-text); }
+.dark-mode .unidad { color: var(--dark-text-subtle); }
+.dark-mode input[type="number"] {
+    background-color: var(--dark-card-bg);
+    border-color: var(--dark-input-border);
+    color: var(--dark-text); 
+}
+.dark-mode input[disabled] { background-color: #202225; }
+.dark-mode footer p { color: var(--dark-text-subtle); }
+
+/* AJUSTE DEL BOTÓN DE TEMA EN MODO OSCURO */
+.dark-mode .theme-toggle {
+    background-color: var(--btn-hover-fill); 
+    border-color: var(--btn-hover-fill); 
+}
+
+.dark-mode .theme-toggle > .fa-moon { opacity: 0; } 
+.dark-mode .theme-toggle > span > .fa-sun { 
+    opacity: 1 !important; 
+    color: white;
+}
+
+/* Modo oscuro: Revertir animación y colores en hover */
+.dark-mode .theme-toggle:hover::after {
+    transform: translateX(-100%); 
+}
+.dark-mode .theme-toggle:hover > span::after {
+    transform: translateX(100%); 
+}
+
+.dark-mode .theme-toggle:hover {
+    border-color: var(--color-background); 
+    background-color: var(--color-background);
+}
+.dark-mode .theme-toggle:hover > .fa-moon { opacity: 1; color: var(--btn-border-color); }
+.dark-mode .theme-toggle:hover > span > .fa-sun { opacity: 0 !important; }
+
+/* MEDIA QUERY... */
 @media (min-width: 600px) {
     
     body {
         padding: var(--spacing-desktop);
-        justify-content: center; /* Centrado vertical en PC */
+        justify-content: center; 
     }
     
     h1 {

@@ -23,7 +23,6 @@ function validarPrecioKilo() {
     
     // Si ya es válido, podemos llamar a 'calcular' para recalcular en caso de que ya hubiera valores
     if (esValido) {
-        // La lógica de cuál calcular primero sigue siendo la misma:
         if (precioDeseadoInput.value) {
             calcular(precioDeseadoInput);
         } else if (pesoGramosInput.value) {
@@ -38,7 +37,6 @@ function validarPrecioKilo() {
  * @param {HTMLInputElement} elemento El campo de entrada que ha sido modificado (this).
  */
 function calcular(elemento) {
-    // 1. Obtener valores de la interfaz
     const precioKiloInput = document.getElementById('precioKilo');
     const pesoGramosInput = document.getElementById('pesoGramos');
     const precioDeseadoInput = document.getElementById('precioDeseado');
@@ -51,58 +49,68 @@ function calcular(elemento) {
         return; 
     }
 
-    // 2. Determinar qué campo fue modificado
     const idModificado = elemento.id;
 
-    if (idModificado === 'precioDeseado') { // CAMBIO: Precio Deseado ahora es el primer caso
-        // --- Caso A: El usuario modificó el PRECIO ---
+    if (idModificado === 'precioDeseado') {
         const precioDeseado = parseFloat(elemento.value);
-
         if (isNaN(precioDeseado) || precioDeseado < 0) {
             pesoGramosInput.value = '';
             return;
         }
 
-        // CÁLCULO DE GRAMOS: (Precio_Deseado / Precio_Kilo) * 1000
         const gramosFinal = (precioDeseado / precioPorKilo) * 1000;
-
-        // Actualizar el campo de Gramos con el nuevo cálculo
         pesoGramosInput.value = gramosFinal.toFixed(0);
 
-    } else if (idModificado === 'pesoGramos') { // CAMBIO: Peso en gramos ahora es el segundo caso
-        // --- Caso B: El usuario modificó los GRAMOS ---
+    } else if (idModificado === 'pesoGramos') {
         const pesoEnGramos = parseFloat(elemento.value);
-
         if (isNaN(pesoEnGramos) || pesoEnGramos < 0) {
             precioDeseadoInput.value = '';
             return;
         }
         
-        // CÁLCULO DE PRECIO: (Gramos / 1000) * Precio_Kilo
         const precioFinal = (pesoEnGramos / 1000) * precioPorKilo;
-        
-        // Actualizar el campo de Precio Deseado con el nuevo cálculo
         precioDeseadoInput.value = precioFinal.toFixed(2);
     }
 }
 
 /**
- * Función provisional para el botón de cambio de tema.
+ * Función para alternar el modo oscuro y cambiar el icono del botón.
  */
 function toggleTheme() {
-    alert("Función de cambio de tema (claro/oscuro) próxima a implementar.");
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    // Alterna la clase y devuelve true si se añadió (dark-mode activado)
+    const isDarkMode = body.classList.toggle('dark-mode'); 
+
+    // Obtener los iconos (usando selectores específicos para evitar conflicto con span)
+    const moonIcon = themeToggle.querySelector('.fa-moon');
+    const sunIcon = themeToggle.querySelector('.fa-sun');
+
+    if (isDarkMode) {
+        // En modo oscuro, el ícono activo es el SOL
+        moonIcon.classList.add('hidden');
+        sunIcon.classList.remove('hidden');
+    } else {
+        // En modo claro, el ícono activo es la LUNA
+        moonIcon.classList.remove('hidden');
+        sunIcon.classList.add('hidden');
+    }
 }
 
 
-// Inicialización: Al cargar la página, limpiamos los campos y validamos el precio por kilo
+// Inicialización
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Limpiamos los campos de cálculo
+    // Inicialización de campos y validación
     document.getElementById('pesoGramos').value = '';
     document.getElementById('precioDeseado').value = '';
-    
-    // 2. Vinculamos el botón de tema a su función
-    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-    // 3. Validamos el precio por kilo para establecer el estado inicial
     validarPrecioKilo();
+    
+    // 1. Vinculamos el botón de tema a su función
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    
+    // 2. Ocultar el sol por defecto (estamos en modo claro)
+    const sunIcon = document.querySelector('#themeToggle .fa-sun');
+    if (sunIcon) {
+        sunIcon.classList.add('hidden');
+    }
 });
