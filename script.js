@@ -62,7 +62,6 @@ function calcular(elemento) {
 
 /**
  * Aplica el tema inmediatamente (sin transición).
- * @param {boolean} isDark True para modo oscuro, false para modo claro.
  */
 function applyTheme(isDark) {
     const body = document.body;
@@ -71,12 +70,14 @@ function applyTheme(isDark) {
     
     if (isDark) {
         body.classList.add('dark-mode');
-        moonIcon.classList.add('hidden');
-        sunIcon.classList.remove('hidden');
+        // Sol está visible por defecto, lo ocultamos y mostramos la luna
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
     } else {
         body.classList.remove('dark-mode');
-        moonIcon.classList.remove('hidden');
-        sunIcon.classList.add('hidden');
+        // Luna está visible por defecto, la ocultamos y mostramos el sol
+        moonIcon.classList.add('hidden');
+        sunIcon.classList.remove('hidden');
     }
 }
 
@@ -87,22 +88,24 @@ function toggleTheme(event) {
     const body = document.body;
     const isDarkMode = body.classList.contains('dark-mode');
     const transitionElement = document.getElementById('theme-transition');
+    const themeToggle = document.getElementById('themeToggle');
     
-    // 1. Guardar el tema opuesto (el que se aplicará después de la transición)
+    // 1. Guardar el tema opuesto
     const nextThemeIsDark = !isDarkMode;
     localStorage.setItem(THEME_STORAGE_KEY, nextThemeIsDark ? 'dark' : 'light');
 
-    // 2. Configurar el color y la posición de inicio de la onda
+    // 2. Configurar el color y la posición de inicio de la onda (Esquina Inferior Izquierda del botón)
     const lightBg = getComputedStyle(body).getPropertyValue('--color-background');
     const darkBg = getComputedStyle(body).getPropertyValue('--dark-bg');
     const nextThemeColor = nextThemeIsDark ? darkBg : lightBg;
     
     transitionElement.style.backgroundColor = nextThemeColor;
     
-    const rect = event.currentTarget.getBoundingClientRect();
+    const rect = themeToggle.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
+    // Posicionar el centro del círculo de transición en el centro del botón
     transitionElement.style.left = `${centerX}px`;
     transitionElement.style.top = `${centerY}px`;
     
@@ -110,11 +113,15 @@ function toggleTheme(event) {
     transitionElement.style.transform = 'scale(0)';
 
     requestAnimationFrame(() => {
-        // Calcular el radio para cubrir toda la pantalla
-        const diagonal = Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2);
-        const scaleFactor = diagonal / transitionElement.offsetWidth;
+        // Calcular el radio para cubrir toda la pantalla (diagonal desde el botón hasta la esquina más lejana)
+        const distanceToFarCorner = Math.sqrt(
+            Math.max(centerX, window.innerWidth - centerX) ** 2 + 
+            Math.max(centerY, window.innerHeight - centerY) ** 2
+        );
         
-        transitionElement.style.transform = `scale(${scaleFactor * 2})`;
+        const scaleFactor = distanceToFarCorner * 2 / transitionElement.offsetWidth;
+        
+        transitionElement.style.transform = `scale(${scaleFactor})`;
     });
     
     // 4. Aplicar el tema después de un retraso
@@ -125,9 +132,6 @@ function toggleTheme(event) {
     // 5. Resetear la transición después de que termine
     setTimeout(() => {
         transitionElement.style.transform = 'scale(0)';
-        // Opcional: Limpiar posición después de resetear
-        // transitionElement.style.left = ''; 
-        // transitionElement.style.top = ''; 
     }, 700); 
 }
 
@@ -136,13 +140,8 @@ function toggleTheme(event) {
  */
 function loadTheme() {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    // Si no hay tema guardado, o si es 'light', no hacemos nada (el CSS es light por defecto)
-    if (savedTheme === 'dark') {
-        applyTheme(true);
-    } else {
-        // Nos aseguramos de aplicar el tema claro y la visibilidad correcta de iconos
-        applyTheme(false); 
-    }
+    // Si es 'dark', aplicamos el modo oscuro. De lo contrario, usamos el modo claro (por defecto).
+    applyTheme(savedTheme === 'dark');
 }
 
 
