@@ -3,26 +3,26 @@
 /* ==================================== */
 body {
     font-family: Arial, sans-serif;
-    margin: 0; /* Eliminamos el margen base en móviles */
+    margin: 0; 
     padding: 0;
     background-color: #f4f4f9;
 }
 
 .container {
-    max-width: 100%; /* Ocupa el 100% del ancho en pantallas pequeñas */
-    margin: 0; /* Eliminamos el margen automático en móviles */
+    max-width: 100%; 
+    margin: 0; 
     padding: 20px;
     background-color: #fff;
-    box-shadow: none; /* Sin sombra en móviles para evitar artefactos */
-    border-radius: 0; /* Sin bordes redondeados en móviles */
-    min-height: 100vh; /* Ocupa toda la altura visible en móviles */
+    box-shadow: none; 
+    border-radius: 0; 
+    min-height: 100vh; 
 }
 
 h1 {
     color: #333;
     text-align: center;
     margin-bottom: 20px;
-    font-size: 1.8em; /* Tamaño de título adecuado para móvil */
+    font-size: 1.8em; 
 }
 
 /* Estilos para las etiquetas y campos de entrada */
@@ -57,21 +57,7 @@ hr {
     margin: 20px 0;
 }
 
-/* Estilos para el área de resultados final */
-.resultado {
-    margin-top: 30px;
-    padding: 15px;
-    border-top: 2px solid #00796b;
-    text-align: center;
-}
-
-.resultado #mensajeResultado {
-    font-size: 1.2em; /* Ligeramente más pequeño en móvil */
-    font-weight: bold;
-    color: #00796b;
-    margin: 0;
-    padding: 5px 0;
-}
+/* El área de resultado/mensaje ya no existe, por lo que no hay estilos aquí. */
 
 
 /* ==================================== */
@@ -80,24 +66,20 @@ hr {
 @media (min-width: 600px) {
     
     body {
-        margin: 20px; /* Restauramos un margen en PC */
+        margin: 20px; 
     }
 
     .container {
-        max-width: 450px; /* Limitamos el ancho para centrar el contenido */
-        margin: 50px auto; /* Centramos el contenedor */
-        padding: 30px; /* Más padding interno */
+        max-width: 450px; 
+        margin: 50px auto; 
+        padding: 30px; 
         background-color: #fff;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Añadimos la sombra */
-        border-radius: 10px; /* Añadimos bordes redondeados */
-        min-height: auto; /* Quitamos la altura mínima de la pantalla */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+        border-radius: 10px; 
+        min-height: auto; 
     }
 
     h1 {
-        font-size: 2em; /* Hacemos el título un poco más grande */
-    }
-
-    .resultado #mensajeResultado {
-        font-size: 1.5em; /* Hacemos el resultado más grande */
+        font-size: 2em; 
     }
 }
