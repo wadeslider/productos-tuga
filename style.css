@@ -7,17 +7,18 @@ body {
 }
 
 .container {
-    max-width: 400px;
+    max-width: 450px; /* Un poco más ancho */
     margin: 50px auto;
-    padding: 20px;
+    padding: 25px;
     background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Sombra más pronunciada */
+    border-radius: 10px;
 }
 
 h1 {
     color: #333;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 /* Estilos para las etiquetas y campos de entrada */
@@ -25,35 +26,44 @@ label {
     display: block;
     margin: 15px 0 5px;
     font-weight: bold;
+    color: #555;
 }
 
 input[type="number"] {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Incluye padding en el width */
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box; 
+    font-size: 1.1em;
 }
 
-/* Estilos para el área de resultados */
+input:focus {
+    border-color: #00796b;
+    box-shadow: 0 0 5px rgba(0, 121, 107, 0.3);
+    outline: none;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #ccc;
+    margin: 20px 0;
+}
+
+/* Estilos para el área de resultados final */
 .resultado {
     margin-top: 30px;
     padding: 15px;
-    background-color: #e0f7fa;
-    border: 1px solid #b2ebf2;
-    border-radius: 4px;
+    border-top: 2px solid #00796b; /* Un borde distintivo */
     text-align: center;
 }
 
-.resultado p {
-    font-size: 1.1em;
-    margin: 5px 0;
-}
-
-/* Estilo específico para el precio final */
-.resultado #precioFinal {
-    font-size: 1.5em;
-    color: #00796b;
+.resultado #mensajeResultado {
+    font-size: 1.3em;
     font-weight: bold;
+    color: #00796b;
+    margin: 0;
+    padding: 5px 0;
 }

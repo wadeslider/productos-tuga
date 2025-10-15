@@ -1,40 +1,74 @@
 /**
- * Función que calcula el precio total basándose en el precio por kilo y el peso en gramos.
- * Se llama automáticamente cada vez que el usuario teclea en los campos de entrada.
+ * Función principal de cálculo. Se activa al modificar cualquiera de los dos campos (gramos o precio).
+ * @param {HTMLInputElement} elemento El campo de entrada que ha sido modificado (this).
  */
-function calcularPrecio() {
-    // 1. Obtener los valores de los campos de entrada
-    // Usamos parseFloat para convertir los valores de texto a números decimales
-    const precioPorKilo = parseFloat(document.getElementById('precioKilo').value);
-    const pesoEnGramos = parseFloat(document.getElementById('pesoGramos').value);
-    
-    // 2. Obtener los elementos HTML donde mostraremos los resultados
-    const resultadoPeso = document.getElementById('pesoMuestra');
-    const resultadoPrecio = document.getElementById('precioFinal');
+function calcular(elemento) {
+    // 1. Obtener valores de la interfaz
+    const precioKiloInput = document.getElementById('precioKilo');
+    const pesoGramosInput = document.getElementById('pesoGramos');
+    const precioDeseadoInput = document.getElementById('precioDeseado');
+    const mensajeResultado = document.getElementById('mensajeResultado');
 
-    // 3. Validar la entrada: si no son números válidos o el peso/precio es negativo, reiniciamos.
-    if (isNaN(precioPorKilo) || isNaN(pesoEnGramos) || precioPorKilo <= 0 || pesoEnGramos < 0) {
-        resultadoPeso.textContent = '0';
-        resultadoPrecio.textContent = '$ 0.00';
-        return; // Detener la función
+    // Convertir el precio por kilo a número
+    const precioPorKilo = parseFloat(precioKiloInput.value);
+
+    // 2. Validar el precio por kilo
+    if (isNaN(precioPorKilo) || precioPorKilo <= 0) {
+        mensajeResultado.textContent = 'ERROR: El precio por kilo debe ser un número positivo.';
+        return;
     }
 
-    // 4. Realizar la conversión de unidades y el cálculo
-    // Convertimos gramos a kilogramos: pesoEnGramos / 1000
-    const pesoEnKilos = pesoEnGramos / 1000;
+    // 3. Determinar qué campo fue modificado
+    const idModificado = elemento.id;
+    let gramosFinal;
+    let precioFinal;
 
-    // Fórmula: Precio Total = Peso en Kilos * Precio por Kilo
-    const precioTotal = pesoEnKilos * precioPorKilo;
-    
-    // 5. Mostrar los resultados en la interfaz
-    
-    // Muestra el peso ingresado (redondeado sin decimales para gramos)
-    resultadoPeso.textContent = pesoEnGramos.toFixed(0); 
+    if (idModificado === 'pesoGramos') {
+        // --- Caso A: El usuario modificó los GRAMOS ---
+        const pesoEnGramos = parseFloat(elemento.value);
 
-    // Muestra el precio final formateado con 2 decimales y el símbolo de moneda
-    resultadoPrecio.textContent = '$ ' + precioTotal.toFixed(2);
+        if (isNaN(pesoEnGramos) || pesoEnGramos <= 0) {
+            // Limpiar resultados si la entrada no es válida
+            precioDeseadoInput.value = '';
+            mensajeResultado.textContent = 'Esperando la entrada...';
+            return;
+        }
+        
+        // CÁLCULO DE PRECIO: (Gramos / 1000) * Precio_Kilo
+        precioFinal = (pesoEnGramos / 1000) * precioPorKilo;
+        
+        // Actualizar el campo de Precio Deseado con el nuevo cálculo
+        precioDeseadoInput.value = precioFinal.toFixed(2);
+        
+        // Actualizar el mensaje de resultado
+        mensajeResultado.textContent = `Pesar ${pesoEnGramos.toFixed(0)} gramos y cobrar $${precioFinal.toFixed(2)}`;
+
+    } else if (idModificado === 'precioDeseado') {
+        // --- Caso B: El usuario modificó el PRECIO ---
+        const precioDeseado = parseFloat(elemento.value);
+
+        if (isNaN(precioDeseado) || precioDeseado <= 0) {
+            // Limpiar resultados si la entrada no es válida
+            pesoGramosInput.value = '';
+            mensajeResultado.textContent = 'Esperando la entrada...';
+            return;
+        }
+
+        // CÁLCULO DE GRAMOS: (Precio_Deseado / Precio_Kilo) * 1000
+        gramosFinal = (precioDeseado / precioPorKilo) * 1000;
+
+        // Actualizar el campo de Gramos con el nuevo cálculo
+        pesoGramosInput.value = gramosFinal.toFixed(0);
+        
+        // Actualizar el mensaje de resultado
+        mensajeResultado.textContent = `Pesar ${gramosFinal.toFixed(0)} gramos y cobrar $${precioDeseado.toFixed(2)}`;
+    }
 }
 
-// Inicializar: Llamar a la función al cargar la página para mostrar el cálculo inicial 
-// si los campos tienen valores predeterminados.
-window.onload = calcularPrecio;
+// Inicialización: Limpiar los campos de peso y precio al cargar la página
+// para evitar confusión inicial y asegurar que el cálculo se haga solo con la interacción.
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('pesoGramos').value = '';
+    document.getElementById('precioDeseado').value = '';
+    document.getElementById('mensajeResultado').textContent = 'Introduzca un valor en Gramos o en Precio.';
+});
