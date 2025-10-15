@@ -6,29 +6,36 @@ body {
     margin: 0; 
     padding: 0;
     background-color: #f4f4f9;
+    /* Aseguramos que el body ocupe al menos la altura de la pantalla para centrado vertical */
+    min-height: 100vh; 
+    display: flex; /* Habilitamos flexbox para centrar el contenido */
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical (esto ayuda a que la "tarjeta" no esté pegada arriba) */
 }
 
 .container {
-    max-width: 100%; 
-    margin: 0; 
+    /* Limitamos el ancho para que no sea excesivo, incluso en móvil si hay espacio */
+    width: 90%; 
+    max-width: 400px; /* El ancho máximo que tendrá la tarjeta, incluso en PC */
+    
+    margin: 20px auto; /* Asegura el centrado horizontal y un poco de margen superior/inferior */
     padding: 20px;
     background-color: #fff;
-    box-shadow: none; 
-    border-radius: 0; 
-    min-height: 100vh; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Aplicamos la sombra en todos los dispositivos */
+    border-radius: 8px; /* Redondeamos los bordes en todos los dispositivos */
 }
 
 h1 {
     color: #333;
     text-align: center;
     margin-bottom: 20px;
-    font-size: 1.8em; 
+    font-size: 1.6em; /* Un poco más pequeño y manejable */
 }
 
 /* Estilos para las etiquetas y campos de entrada */
 label {
     display: block;
-    margin: 15px 0 5px;
+    margin: 10px 0 5px; /* Margen ligeramente reducido */
     font-weight: bold;
     color: #555;
     font-size: 1em;
@@ -36,12 +43,12 @@ label {
 
 input[type="number"] {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
+    padding: 10px;
+    margin-bottom: 10px; /* Margen reducido */
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 4px;
     box-sizing: border-box;
-    font-size: 1.1em;
+    font-size: 1em;
 }
 
 input:focus {
@@ -54,32 +61,5 @@ hr {
     border: 0;
     height: 1px;
     background: #ccc;
-    margin: 20px 0;
-}
-
-/* El área de resultado/mensaje ya no existe, por lo que no hay estilos aquí. */
-
-
-/* ==================================== */
-/* MEDIA QUERY (PARA PANTALLAS GRANDES - PCs) */
-/* ==================================== */
-@media (min-width: 600px) {
-    
-    body {
-        margin: 20px; 
-    }
-
-    .container {
-        max-width: 450px; 
-        margin: 50px auto; 
-        padding: 30px; 
-        background-color: #fff;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
-        border-radius: 10px; 
-        min-height: auto; 
-    }
-
-    h1 {
-        font-size: 2em; 
-    }
+    margin: 15px 0; /* Margen reducido */
 }
