@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Peso y Precio</title>
+    <link rel="icon" href="image.png" type="image/png">
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
@@ -11,16 +12,22 @@
     <div class="container">
         <h1>Calculadora de Croquetas</h1>
 
-        <label for="precioKilo">Precio por Kilogramo ($/kg - Fijo):</label>
-        <input type="number" id="precioKilo" placeholder="Ej: 48.00" step="0.01"> 
+        <label for="precioKilo">
+            Precio por Kilogramo <span class="unidad">($/kg)</span>:
+        </label>
+        <input type="number" id="precioKilo" placeholder="Ej: 48.00" step="0.01" oninput="validarPrecioKilo()"> 
         
         <hr>
         
-        <label for="pesoGramos">Peso a Pesar (en gramos):</label>
-        <input type="number" id="pesoGramos" placeholder="Introduzca gramos (Ej: 500)" min="1" oninput="calcular(this)">
+        <label for="pesoGramos">
+            Peso <span class="unidad">(gramos)</span>:
+        </label>
+        <input type="number" id="pesoGramos" placeholder="Introduzca gramos (Ej: 500)" min="1" oninput="calcular(this)" disabled>
         
-        <label for="precioDeseado">Precio a Cobrar ($):</label>
-        <input type="number" id="precioDeseado" placeholder="Introduzca precio (Ej: 20)" min="0.01" oninput="calcular(this)">
+        <label for="precioDeseado">
+            Precio a Cobrar <span class="unidad">($)</span>:
+        </label>
+        <input type="number" id="precioDeseado" placeholder="Introduzca precio (Ej: 20)" min="0.01" oninput="calcular(this)" disabled>
 
     </div>
 
