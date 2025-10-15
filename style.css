@@ -6,7 +6,7 @@
     --color-text-light: #6C757D; 
     --color-card-bg: #FFFFFF;
     --color-card-border: #E9ECEF; 
-    --color-card-shadow: rgba(0, 0, 0, 0.05);
+    --color-card-shadow: rgba(0, 0, 0, 0.08); /* Sombra más fuerte */
     --color-input-bg: #F8F9FA;
     --color-input-border: #CED4DA; 
     --color-input-disabled: #E9ECEF;
@@ -18,24 +18,23 @@
     --dark-text-subtle: #96989d; 
     --dark-input-border: #40444b; 
     
-    /* Acentos (Ambos temas) */
-    --color-metal-start: #3d884e;   /* Oscuro */
-    --color-metal-end: #8BC34A;     /* Claro */
+    /* Acentos */
+    --color-metal-start: #3d884e;   
+    --color-metal-end: #8BC34A;     
     --color-line-gradient: linear-gradient(90deg, var(--color-metal-start), var(--color-metal-end)); 
     --color-heart: #FF0000;      
     
-    /* Colores del Botón de Tema (Modo Claro) */
-    --btn-border-color: var(--dark-bg); /* Borde/Sol oscuro */
-    --btn-hover-fill: var(--dark-bg);   /* Relleno oscuro */
-    --btn-icon-hover: var(--color-background); /* Icono luna claro (color del fondo claro) */
+    /* Colores del Botón de Tema */
+    --btn-border-color: var(--dark-bg); 
+    --btn-hover-fill: var(--dark-bg);   
+    --btn-icon-hover: var(--color-background); 
 
-    /* Espaciado responsivo para bordes */
-    --spacing-mobile: 4vmin;
-    --spacing-desktop: 20px;
+    /* Espaciado responsivo (usamos REMs para mejor escalabilidad) */
+    --spacing: 1.25rem; /* ~20px */
 }
 
 /* ==================================== */
-/* TRANSICIÓN DE TEMA Y ESTILOS GLOBALES */
+/* 1. ESTILOS GLOBALES Y LAYOUT */
 /* ==================================== */
 body {
     font-family: 'Arial', sans-serif;
@@ -48,38 +47,57 @@ body {
     align-items: center; 
     justify-content: flex-start; 
     
-    padding: 20px 0 100px 0; /* Espacio arriba/abajo. Horizontal 0 */
+    padding: var(--spacing) 0; /* Padding vertical */
     box-sizing: border-box; 
     transition: background-color 0.4s;
     
-    /* PREVENIR SCROLL HORIZONTAL */
+    /* GARANTIZAR NO SCROLL HORIZONTAL */
     overflow-x: hidden; 
 }
 
-/* 1. H1 Y SOMBRA SUTIL */
+/* 2. GOOGLE MATERIAL ICONS */
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Icono por defecto */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 3. TÍTULO Y SOMBRA */
 h1 {
-    font-family: 'Bebas Neue', cursive; /* TIPOGRAFÍA ANTERIOR */
-    text-align: center; margin: 0 0 40px; font-size: 3em; letter-spacing: 2px; font-weight: 900;
+    font-family: 'Bebas Neue', cursive; 
+    text-align: center; margin: 0 0 2rem; font-size: 3em; letter-spacing: 2px; font-weight: 900;
     
     background: var(--color-line-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent; 
     background-clip: text;
     
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3)); 
+    /* SOMBRA DETRÁS DEL DISEÑO */
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.4)); /* Más visible */
     transition: all 0.3s;
 }
 .dark-mode h1 {
-    filter: drop-shadow(2px 2px 2px rgba(255, 255, 255, 0.4));
+    filter: drop-shadow(2px 2px 2px rgba(255, 255, 255, 0.5));
 }
 
 
-/* 2. DISEÑO ELEGANTE DE TARJETA (CONTAINER) */
+/* 4. DISEÑO DE TARJETA RESPONSIVO */
 .container {
-    width: calc(100% - 2 * var(--spacing-mobile)); /* Margen responsivo */
+    width: calc(100% - 2 * var(--spacing)); /* Margen en los lados */
     max-width: 450px; 
-    margin: 0 auto; /* Centrado horizontal */
-    padding: 35px; 
+    margin: 0 auto 2rem auto; 
+    padding: 2rem; /* Espaciado interno responsivo */
     
     background: var(--color-card-bg);
     border-radius: 12px; 
@@ -91,38 +109,36 @@ h1 {
     transition: all 0.3s;
 }
 
-/* Inputs, Labels, HR... (se mantienen) */
-label { display: block; margin: 15px 0 5px; font-weight: bold; color: var(--color-text-dark); font-size: 1.1em; }
+/* Inputs, Labels, HR... (ajustados a REMs) */
+label { display: block; margin: 1rem 0 0.5rem; font-weight: bold; color: var(--color-text-dark); font-size: 1.1em; }
 .unidad { color: var(--color-text-light); font-weight: 400; font-size: 0.9em; }
 input[type="number"] { 
-    width: 100%; padding: 12px 15px; margin-bottom: 15px; box-sizing: border-box; font-size: 1em; border-radius: 8px;
+    width: 100%; padding: 0.75rem 1rem; margin-bottom: 0.5rem; box-sizing: border-box; font-size: 1em; border-radius: 8px;
     background-color: var(--color-input-bg); border: 1px solid var(--color-input-border); transition: all 0.3s;
 }
 input:focus:not([disabled]) { border-color: var(--color-metal-start); box-shadow: 0 0 0 3px rgba(61, 136, 78, 0.2); outline: none; }
 input[disabled] { background-color: var(--color-input-disabled); cursor: not-allowed; }
-hr { border: 0; height: 1px; background: var(--color-line-gradient); margin: 30px 0; }
+hr { border: 0; height: 1px; background: var(--color-line-gradient); margin: 1.5rem 0; }
 
-/* 3. FOOTER */
+/* 5. FOOTER */
 footer {
-    margin-top: 20px; 
-    margin-bottom: var(--spacing-mobile);
+    margin-top: 1rem; 
+    margin-bottom: var(--spacing);
     width: 90%;
     max-width: 450px;
     text-align: center;
 }
 footer p { color: var(--color-text-dark); margin: 0; opacity: 0.7; transition: color 0.3s; }
-
-/* Corazón Latiente */
 @keyframes beat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.2); } }
 .heart-icon { color: var(--color-heart); animation: beat 0.8s infinite alternate; display: inline-block; margin: 0 3px; }
 
 /* ==================================== */
-/* 4. BOTÓN DE TEMA (Abajo Izquierda - Animación Horizontal) */
+/* 6. BOTÓN DE TEMA (Animación Dividida) */
 /* ==================================== */
 .theme-toggle {
     position: fixed; 
-    bottom: var(--spacing-mobile); /* Abajo */
-    left: var(--spacing-mobile); /* Izquierda */
+    bottom: var(--spacing); 
+    left: var(--spacing); 
     
     width: 120px; height: 40px; border-radius: 6px; 
     
@@ -135,46 +151,56 @@ footer p { color: var(--color-text-dark); margin: 0; opacity: 0.7; transition: c
     z-index: 1000;
 }
 
-/* Iconos (CORRECCIÓN: Aseguramos la visibilidad y posición) */
+/* Iconos */
 .theme-toggle i {
-    position: absolute; top: 50%; transform: translate(-50%, -50%); font-size: 1.2em; z-index: 3;
+    font-size: 20px; /* Tamaño del icono */
+    position: absolute; top: 50%; transform: translate(-50%, -50%); z-index: 3;
     transition: all 0.25s;
-    left: 50%; /* Centramos ambos para el efecto de transición de Sol/Luna */
+    left: 50%; 
 }
 
-/* Iconos de Modo Claro */
-.theme-toggle > .fa-sun { color: var(--btn-border-color); opacity: 1; } /* Sol oscuro visible */
-.theme-toggle > span > .fa-moon { color: var(--btn-icon-hover); opacity: 0; } /* Luna clara invisible */
-
+/* Iconos de Modo Claro: Sol visible, Luna invisible */
+.theme-toggle > .material-icons[data-icon="sun"] { color: var(--btn-border-color); opacity: 1; } 
+.theme-toggle > span > .material-icons[data-icon="moon"] { color: var(--btn-icon-hover); opacity: 0; } 
 .hidden { opacity: 0 !important; } 
 
-/* Pseudo-elemento para el RELLENO HORIZONTAL COMPLETO */
-.theme-toggle::after {
+/* Pseudo-elementos para el RELLENO DIVIDIDO HORIZONTAL */
+.theme-toggle::before, .theme-toggle::after {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%; 
-    height: 100%; 
-    background-color: var(--btn-hover-fill); /* Relleno oscuro */
-    transform: translateX(-100%); /* Oculto a la izquierda */
+    height: 50%; /* Mitad del botón */
+    background-color: var(--btn-hover-fill); 
     transition: transform 0.3s ease-out;
     z-index: 1;
+}
+
+/* MITAD SUPERIOR: Entra de izquierda a derecha (L -> R) */
+.theme-toggle::before {
+    top: 0;
+    left: 0;
+    transform: translateX(-100%); 
+}
+
+/* MITAD INFERIOR: Entra de derecha a izquierda (R -> L) */
+.theme-toggle::after {
+    bottom: 0;
+    right: 0;
+    transform: translateX(100%);
 }
 
 /* ESTADO HOVER (Modo Claro) */
 .theme-toggle:hover { border-color: var(--btn-hover-fill); }
 
-.theme-toggle:hover::after {
-    transform: translateX(0); /* Entra de izquierda a derecha */
-}
+.theme-toggle:hover::before { transform: translateX(0); } /* Relleno superior L -> R */
+.theme-toggle:hover::after { transform: translateX(0); }  /* Relleno inferior R -> L */
 
-.theme-toggle:hover > .fa-sun { opacity: 0; } 
-.theme-toggle:hover > span > .fa-moon { opacity: 1; } 
+.theme-toggle:hover > .material-icons[data-icon="sun"] { opacity: 0; } 
+.theme-toggle:hover > span > .material-icons[data-icon="moon"] { opacity: 1; } 
 
 
 /* ==================================== */
-/* 5. ESTILOS DEL MODO OSCURO (.dark-mode) */
+/* 7. ESTILOS DEL MODO OSCURO (.dark-mode) */
 /* ==================================== */
 
 body.dark-mode { background-color: var(--dark-bg); }
@@ -188,27 +214,30 @@ body.dark-mode { background-color: var(--dark-bg); }
 /* BOTÓN EN MODO OSCURO (Invertido) */
 .dark-mode .theme-toggle { border-color: var(--btn-icon-hover); }
 
-/* Modo Oscuro: Luna es el icono de inicio */
-.dark-mode .theme-toggle > .fa-sun { opacity: 0; } 
-.dark-mode .theme-toggle > span > .fa-moon { opacity: 1 !important; color: var(--btn-icon-hover); } 
+/* Modo Oscuro: Luna visible, Sol oculto */
+.dark-mode .theme-toggle > .material-icons[data-icon="sun"] { opacity: 0; } 
+.dark-mode .theme-toggle > span > .material-icons[data-icon="moon"] { opacity: 1 !important; color: var(--btn-icon-hover); } 
 
-/* Modo Oscuro: Relleno CLARO (Sale de derecha a izquierda) */
-.dark-mode .theme-toggle::after {
-    background-color: var(--btn-icon-hover); 
-    transform: translateX(100%); /* Oculto a la derecha */
+/* Modo Oscuro: Relleno CLARO (Sale de su lado respectivo para DEJAR ver el fondo oscuro) */
+.dark-mode .theme-toggle::before, .dark-mode .theme-toggle::after {
+    background-color: var(--btn-icon-hover); /* Relleno CLARO */
 }
+/* Al inicio del modo oscuro, los rellenos CLAROS deben estar visibles */
+.dark-mode .theme-toggle::before { transform: translateX(0); } 
+.dark-mode .theme-toggle::after { transform: translateX(0); } 
 
-/* Modo oscuro: REVELAR fondo en hover (animación inversa) */
+/* Modo oscuro: HOVER (Revela el color OSCURO del fondo) */
 .dark-mode .theme-toggle:hover { border-color: var(--btn-hover-fill); }
-.dark-mode .theme-toggle:hover::after { transform: translateX(0); } 
 
-/* Modo oscuro: HOVER de ICONOS */
-.dark-mode .theme-toggle:hover > span > .fa-moon { opacity: 0; } 
-.dark-mode .theme-toggle:hover > .fa-sun { opacity: 1; color: var(--btn-hover-fill); } 
+.dark-mode .theme-toggle:hover::before { transform: translateX(-100%); } /* Se va a la izquierda */
+.dark-mode .theme-toggle:hover::after { transform: translateX(100%); } /* Se va a la derecha */
+
+.dark-mode .theme-toggle:hover > span > .material-icons[data-icon="moon"] { opacity: 0; } /* Luna se oculta */
+.dark-mode .theme-toggle:hover > .material-icons[data-icon="sun"] { opacity: 1; color: var(--btn-hover-fill); } /* Sol OSCURO aparece */
 
 
 /* ==================================== */
-/* 6. ESTILOS DE LA TRANSICIÓN DE ONDA */
+/* 8. TRANSICIÓN DE ONDA */
 /* ==================================== */
 #theme-transition {
     position: fixed;
@@ -223,10 +252,10 @@ body.dark-mode { background-color: var(--dark-bg); }
 }
 
 
-/* MEDIA QUERY (Posición de Botón) */
+/* MEDIA QUERY (Ajustes de espaciado para desktop) */
 @media (min-width: 600px) { 
     .theme-toggle {
-        bottom: var(--spacing-desktop); 
-        left: var(--spacing-desktop);
+        bottom: 2rem; 
+        left: 2rem;
     }
 }

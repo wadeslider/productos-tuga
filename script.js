@@ -49,8 +49,9 @@ function calcular(elemento) {
  */
 function applyTheme(isDark) {
     const body = document.body;
-    const moonIcon = document.querySelector('.fa-moon');
-    const sunIcon = document.querySelector('.fa-sun');
+    // Seleccionamos por el atributo data-icon para mayor robustez
+    const moonIcon = document.querySelector('[data-icon="moon"]');
+    const sunIcon = document.querySelector('[data-icon="sun"]');
     
     if (isDark) {
         body.classList.add('dark-mode');
@@ -78,7 +79,7 @@ function toggleTheme(event) {
     const nextThemeIsDark = !isDarkMode;
     localStorage.setItem(THEME_STORAGE_KEY, nextThemeIsDark ? 'dark' : 'light');
 
-    // 2. Configurar el color y la posición de inicio de la onda 
+    // 2. Configurar el color y la posición de inicio de la onda (Centro del botón)
     const lightBg = getComputedStyle(body).getPropertyValue('--color-background');
     const darkBg = getComputedStyle(body).getPropertyValue('--dark-bg');
     const nextThemeColor = nextThemeIsDark ? darkBg : lightBg;
@@ -97,7 +98,7 @@ function toggleTheme(event) {
     transitionElement.style.transform = 'scale(0)';
 
     requestAnimationFrame(() => {
-        // Calcular la distancia a la esquina más lejana desde el centro del botón (Bottom Left)
+        // Calcular la distancia a la esquina más lejana
         const distanceToFarCorner = Math.sqrt(
             Math.max(centerX, window.innerWidth - centerX) ** 2 + 
             Math.max(centerY, window.innerHeight - centerY) ** 2
@@ -125,7 +126,6 @@ function toggleTheme(event) {
  */
 function loadTheme() {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    // Si es 'dark', aplicamos el modo oscuro. De lo contrario, usamos el modo claro (por defecto).
     applyTheme(savedTheme === 'dark');
 }
 
