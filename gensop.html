@@ -40,35 +40,63 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Ocultar elementos en la vista de impresión */
+        /* Ícono de Checklist - Tamaño para vista de pantalla */
+        .word-list-icon {
+            height: 0.625rem; /* 10px */
+            width: 0.625rem;  /* 10px */
+        }
+
+        /* Ocultar elementos y optimizar layout en la vista de impresión */
         @media print {
+            /* Oculta los controles */
             .no-print {
                 display: none !important;
             }
-            .printable-area {
-                margin: 0;
-                box-shadow: none;
-                max-width: none !important;
-                width: 100%;
+            
+            /* Ajusta el cuerpo para que no tenga márgenes */
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
             }
+
+            /* Asegura que el área imprimible use todo el espacio sin padding */
+            .printable-area {
+                margin: 0 !important;
+                padding: 0.5rem !important; /* Mínimo padding para evitar recortes en algunos navegadores */
+                box-shadow: none !important;
+                max-width: none !important;
+                width: 100% !important;
+                border: none !important;
+            }
+
+            /* Ajustes para la cuadrícula en impresión */
             .grid-container {
                 border-width: 1px; /* Borde más fino para impresión */
                 border-color: #000;
                 border-radius: 0.5rem;
             }
             .grid-cell {
-                font-size: 0.6rem; /* Tamaño de letra más pequeño para impresión */
+                font-size: 0.5rem !important; /* Tamaño de letra más pequeño para máxima densidad */
                 height: auto;
-                padding: 0.5px; /* Mínimo padding para impresión */
+                padding: 0.5px; 
                 line-height: 1; 
             }
+            
+            /* Ajustes de tipografía en impresión */
             #outputTitle {
-                font-size: 1.5rem !important; /* Ajustar tamaño para impresión */
-                margin-bottom: 1rem !important;
+                font-size: 1.5rem !important;
+                margin-bottom: 0.75rem !important;
             }
             #wordListOutput {
-                margin-top: 1rem !important;
-                font-size: 0.75rem; /* Asegurar que la lista de palabras se imprima más pequeña */
+                margin-top: 0.75rem !important;
+                font-size: 0.7rem !important; /* Tamaño de lista muy pequeño */
+            }
+
+            /* Ajustes para el ícono de checklist en impresión */
+            .word-list-icon {
+                height: 0.5rem !important;
+                width: 0.5rem !important;
+                border-width: 1px !important;
             }
         }
     </style>
@@ -363,10 +391,10 @@
             wordListOutput.innerHTML = '';
             placedWords.sort().forEach(word => {
                 const item = document.createElement('div');
-                // Clase ajustada para lista de palabras (text-sm para ser más pequeño, flex para alinear)
-                item.className = 'flex items-center text-sm font-semibold tracking-wider text-gray-800 space-x-2'; 
-                // Ícono de checklist redondo (pequeño círculo con borde)
-                item.innerHTML = `<span class="h-3 w-3 border-2 border-gray-500 rounded-full flex-shrink-0"></span><span>${word}</span>`;
+                // Clase ajustada a text-xs para que el texto sea más pequeño
+                item.className = 'flex items-center text-xs font-semibold tracking-wider text-gray-800 space-x-2'; 
+                // Ícono de checklist redondo (usando la clase word-list-icon definida en CSS)
+                item.innerHTML = `<span class="word-list-icon border-2 border-gray-500 rounded-full flex-shrink-0"></span><span>${word}</span>`;
                 wordListOutput.appendChild(item);
             });
             
@@ -413,7 +441,7 @@
         });
 
         printBtn.addEventListener('click', () => {
-            // Usa la función nativa de impresión del navegador, que permite guardar como PDF.
+            // Esta función ejecuta el diálogo de impresión del navegador, que es el equivalente a Ctrl + P.
             window.print();
         });
 
