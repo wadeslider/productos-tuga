@@ -155,11 +155,16 @@
         <!-- Área Imprimible (Resultado) --><div id="printableArea" class="printable-area p-4 sm:p-6 rounded-xl border border-gray-200" style="display: none;">
             <h1 id="outputTitle" class="text-2xl sm:text-3xl font-extrabold text-center mb-6 text-gray-900 uppercase"></h1>
             
-            <div id="puzzleOutput" class="mx-auto w-full aspect-square" style="max-width: 600px;">
-                <!-- Aquí se renderizará la cuadrícula --></div>
-            
-            <!-- Lista de Palabras --><div id="wordListOutput" class="text-sm text-gray-600 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 mt-8 pl-4">
-                <!-- Aquí se renderizará la lista de palabras --></div>
+            <!-- CONTENEDOR CENTRAL PARA ALINEAR LA CUADRÍCULA Y LA LISTA -->
+            <div id="puzzleContentWrapper" class="mx-auto" style="max-width: 600px;"> 
+                <div id="puzzleOutput" class="w-full aspect-square">
+                    <!-- Aquí se renderizará la cuadrícula --></div>
+                
+                <!-- Lista de Palabras -->
+                <!-- Se eliminó el 'pl-4' para centrar correctamente dentro del contenedor padre -->
+                <div id="wordListOutput" class="text-sm text-gray-600 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 mt-8">
+                    <!-- Aquí se renderizará la lista de palabras --></div>
+            </div>
         </div>
 
         <!-- Área de Mensajes --><div id="messageBox" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
@@ -376,7 +381,7 @@
             // 1. Renderizar la cuadrícula
             puzzleOutput.innerHTML = '';
             puzzleOutput.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-            puzzleOutput.className = 'grid-container mx-auto w-full aspect-square'; // Reset classes for dynamic sizing
+            puzzleOutput.className = 'grid-container w-full aspect-square'; // Reset classes for dynamic sizing (w-full ensures it takes the 600px max width from its parent)
             
             grid.forEach(row => {
                 row.forEach(letter => {
