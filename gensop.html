@@ -3,14 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Sopa de Letras</title>
+    <title>Generador de Sopa de Letras 10/10</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <!-- Incluye todas las nuevas fuentes de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Permanent+Marker&family=Balsamiq+Sans&family=Alegreya+Sans&family=Lobster&family=Cabin+Sketch&family=Pacifico&family=Josefin+Sans&family=Handlee&family=Righteous&family=Roboto+Mono&display=swap" rel="stylesheet">
     <style>
+        /* Estilo Base y Fondo Moderno */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f4f7f9;
+            background-color: #eef2f5; /* Color base muy claro */
+            /* Sutil degradado y patrón de fondo geométrico (Triángulos muy suaves) */
+            background-image: linear-gradient(135deg, #f8fafc 25%, transparent 25%), 
+                              linear-gradient(225deg, #f8fafc 25%, transparent 25%), 
+                              linear-gradient(45deg, #f8fafc 25%, transparent 25%), 
+                              linear-gradient(315deg, #f8fafc 25%, #eef2f5 25%);
+            background-position: 10px 0, 10px 0, 0 0, 0 0;
+            background-size: 20px 20px;
+            background-repeat: repeat;
+            min-height: 100vh;
         }
+        
+        /* Font Classes (Aplicadas solo al título) */
+        .font-permanent-marker { font-family: 'Permanent Marker', cursive !important; }
+        .font-balsamiq-sans { font-family: 'Balsamiq Sans', cursive !important; }
+        .font-alegreya-sans { font-family: 'Alegreya Sans', sans-serif !important; }
+        .font-lobster { font-family: 'Lobster', cursive !important; }
+        .font-cabin-sketch { font-family: 'Cabin Sketch', cursive !important; }
+        .font-pacifico { font-family: 'Pacifico', cursive !important; }
+        .font-josefin-sans { font-family: 'Josefin Sans', sans-serif !important; }
+        .font-handlee { font-family: 'Handlee', cursive !important; }
+        .font-righteous { font-family: 'Righteous', cursive !important; }
+        .font-roboto-mono { font-family: 'Roboto Mono', monospace !important; }
+        /* --- End Font Classes --- */
+
         /* Estilo específico para la cuadrícula */
         .grid-container {
             display: grid;
@@ -18,84 +43,117 @@
             background-color: #ffffff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 0.75rem; /* Esquinas redondeadas */
-            overflow: hidden; /* Asegura que el contenido interno respete el borde redondeado */
+            overflow: hidden; 
         }
         .grid-cell {
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 0.7rem; /* Tamaño de fuente para la pantalla */
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 700; 
             color: #1f2937;
-            padding: 0.1rem; /* Añade un poco de espacio alrededor de la letra, separándola del borde */
+            padding: 0.1rem; 
             user-select: none;
             cursor: default;
         }
 
         /* Estilo para el título de la sopa */
         #outputTitle {
-            font-family: 'Permanent Marker', cursive;
-            font-size: 1.8rem; /* Tamaño ligeramente más reducido */
+            font-size: 1.8rem; 
             letter-spacing: 0.1em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.15); 
+            transition: all 0.3s ease;
         }
 
         /* Ícono de Checklist - Tamaño para vista de pantalla */
         .word-list-icon {
-            height: 0.625rem; /* 10px */
-            width: 0.625rem;  /* 10px */
+            height: 0.75rem; /* 12px */
+            width: 0.75rem;  /* 12px */
         }
 
         /* Ocultar elementos y optimizar layout en la vista de impresión */
         @media print {
-            /* Oculta los controles */
-            .no-print {
-                display: none !important;
-            }
-            
-            /* Ajusta el cuerpo para que no tenga márgenes */
-            body {
-                margin: 0 !important;
-                padding: 0 !important;
+            .no-print { display: none !important; }
+            body { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                background: none !important; 
             }
 
-            /* Asegura que el área imprimible use todo el espacio sin padding */
+            /* 1. Asegura que el área imprimible sea el foco y use el ancho completo */
             .printable-area {
                 margin: 0 !important;
-                padding: 0.5rem !important; /* Mínimo padding para evitar recortes en algunos navegadores */
+                padding: 0.5in !important; /* Margen de impresión */
                 box-shadow: none !important;
                 max-width: none !important;
                 width: 100% !important;
                 border: none !important;
+                display: block !important; /* Evita conflicto con flex de pantalla */
             }
 
-            /* Ajustes para la cuadrícula en impresión */
+            /* Contenedor de contenido - forzando diseño vertical centrado (Problemas 1 y 2) */
+            #puzzleContentWrapper {
+                display: flex;
+                flex-direction: column !important; 
+                align-items: center !important; /* Centra el contenido */
+                max-width: 7in !important; /* Ancho típico de impresión */
+                width: 100% !important;
+                margin: 0 auto !important; /* Centra el contenedor en la hoja */
+                gap: 1.5rem !important; 
+            }
+            
+            /* Título en impresión */
+            #outputTitle {
+                order: -1; /* Mueve el título antes de la cuadrícula */
+                font-size: 1.7rem !important; 
+                margin-bottom: 1.5rem !important;
+                text-shadow: none;
+                width: 100% !important;
+            }
+
+            /* Cuadrícula - centrada y aspecto cuadrado */
+            #puzzleOutput {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 auto !important; /* Centra la cuadrícula si el ancho es menor */
+            }
+
+            /* Lista de Palabras (Problema 3) */
+            #wordListContainer {
+                width: 90% !important;
+                max-width: 90% !important;
+                padding: 0 !important; /* Quita padding extra */
+                background: none !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            
+            /* Oculta el encabezado de la lista de palabras en impresión (Problema 3) */
+            #wordListContainer h3 {
+                display: none !important;
+            }
+
             .grid-container {
-                border-width: 1px; /* Borde más fino para impresión */
+                border-width: 1px; 
                 border-color: #000;
-                border-radius: 0.5rem;
+                border-radius: 0.25rem; 
+                box-shadow: none;
             }
             .grid-cell {
-                font-size: 0.7rem !important; /* Mantiene el tamaño original para impresión */
+                font-size: 0.7rem !important; 
                 height: auto;
                 padding: 0.5px; 
                 line-height: 1; 
             }
             
-            /* Ajustes de tipografía en impresión */
-            #outputTitle {
-                font-size: 1.5rem !important;
-                margin-bottom: 0.75rem !important;
-            }
             #wordListOutput {
-                margin-top: 0.75rem !important;
-                font-size: 0.7rem !important; /* Tamaño de lista muy pequeño */
+                margin-top: 0 !important; 
+                font-size: 0.8rem !important; 
             }
 
-            /* Ajustes para el ícono de checklist en impresión */
             .word-list-icon {
-                height: 0.5rem !important;
-                width: 0.5rem !important;
+                height: 0.6rem !important;
+                width: 0.6rem !important;
                 border-width: 1px !important;
             }
         }
@@ -103,74 +161,104 @@
 </head>
 <body class="p-4 sm:p-8">
 
-    <div id="app" class="max-w-4xl mx-auto bg-white p-6 sm:p-10 rounded-xl shadow-2xl">
+    <!-- Contenedor principal con estilo flotante y moderno -->
+    <div id="app" class="max-w-5xl mx-auto bg-white p-6 sm:p-10 rounded-3xl shadow-2xl transition duration-500 hover:shadow-3xl">
 
-        <!-- Área de Control (No Imprimir) --><div class="no-print">
-            <h1 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">🧩 Generador de Sopa de Letras</h1>
-            <p class="text-sm text-gray-600 mb-6">Ingresa un título, añade palabras y presiona "Generar Sopa" para crear tu puzzle. Luego usa el botón de la impresora para descargar.</p>
+        <!-- Área de Control (No Imprimir) -->
+        <div class="no-print">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2 flex items-center">
+                <span class="text-indigo-600 mr-3 text-5xl">✨</span> Generador de Sopa de Letras
+            </h1>
+            <p class="text-base text-gray-500 mb-8 border-b pb-4">Personaliza, genera e imprime tu puzzle con un acabado profesional.</p>
 
-            <!-- Inputs --><div class="space-y-4 mb-8 p-4 bg-gray-50 rounded-lg border">
-                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                    <input type="text" id="puzzleTitle" placeholder="Título de la Sopa de Letras (Ej: Frutas)"
-                        class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm shadow-sm"
-                        value="Mi Sopa de Letras Personalizada">
-                    
-                    <select id="gridSize"
-                        class="p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm shadow-sm w-full sm:w-auto">
-                        <option value="15">Tamaño 15x15</option>
-                        <option value="20" selected>Tamaño 20x20</option>
-                        <option value="25">Tamaño 25x25</option>
-                    </select>
+            <!-- Inputs y Configuración -->
+            <div class="space-y-6 mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-100 shadow-inner">
+                
+                <!-- Sección 1: Configuración General -->
+                <div class="space-y-4">
+                    <h2 class="text-xl font-bold text-gray-700 border-b pb-1">Configuración del Puzzle</h2>
+                    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+                        <input type="text" id="puzzleTitle" placeholder="Título de la Sopa de Letras (Ej: Frutas)"
+                            class="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 text-base shadow-sm transition"
+                            value="Mi Sopa de Letras Personalizada">
+                        
+                        <select id="gridSize"
+                            class="p-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 text-base shadow-sm w-full md:w-48 transition">
+                            <option value="15">Tamaño 15x15</option>
+                            <option value="20" selected>Tamaño 20x20</option>
+                            <option value="25">Tamaño 25x25</option>
+                        </select>
+
+                        <!-- Selector de Fuente -->
+                        <select id="fontSelect"
+                            class="p-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 text-base shadow-sm w-full md:w-56 transition">
+                            <!-- Opciones pobladas por JS -->
+                        </select>
+                    </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                    <input type="text" id="wordInput" placeholder="Escribe una palabra y presiona Enter o Añadir"
-                        class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm shadow-sm">
-                    <button id="addWordBtn"
-                        class="px-4 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 transform hover:scale-105">
-                        Añadir Palabra
-                    </button>
-                </div>
+                <!-- Sección 2: Gestión de Palabras -->
+                <div class="space-y-4 pt-4 border-t border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-700 border-b pb-1">Palabras a Incluir</h2>
+                    <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                        <input type="text" id="wordInput" placeholder="Escribe una palabra y presiona Enter o Añadir"
+                            class="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-pink-500 focus:border-pink-500 text-base shadow-sm transition">
+                        <button id="addWordBtn"
+                            class="px-6 py-3 bg-pink-500 text-white font-semibold rounded-xl shadow-lg hover:bg-pink-600 transition duration-200 transform hover:scale-[1.03] active:scale-95 text-base">
+                            + Añadir
+                        </button>
+                    </div>
 
-                <!-- Lista de Palabras Añadidas --><div id="wordListDisplay" class="flex flex-wrap gap-2 min-h-8 p-2 border border-dashed rounded-lg bg-white">
-                    <p class="text-gray-400 italic text-sm" id="emptyMessage">Aún no has añadido palabras.</p>
+                    <!-- Lista de Palabras Añadidas --><div id="wordListDisplay" class="flex flex-wrap gap-3 min-h-12 p-3 border-2 border-dashed border-gray-300 rounded-xl bg-white shadow-inner mt-4">
+                        <p class="text-gray-400 italic text-sm" id="emptyMessage">Aún no has añadido palabras. Intenta con "SOL", "LUNA", "ESTRELLA".</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Botones de Acción --><div class="flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0 sm:space-x-4 mb-10">
+            <!-- Botones de Acción Finales -->
+            <div class="flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0 sm:space-x-6 mb-10">
                 <button id="generateBtn"
-                    class="w-full sm:w-1/2 px-6 py-3 bg-blue-600 text-white font-bold text-lg rounded-xl shadow-lg hover:bg-blue-700 transition duration-200 transform hover:scale-[1.02] active:scale-95">
+                    class="w-full sm:w-1/2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-extrabold text-xl rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 transform hover:scale-[1.02] active:scale-95 border-b-4 border-indigo-800">
                     Generar Sopa de Letras
                 </button>
                 <button id="printBtn"
-                    class="w-full sm:w-1/2 px-6 py-3 bg-green-500 text-white font-bold text-lg rounded-xl shadow-lg hover:bg-green-600 transition duration-200 transform hover:scale-[1.02] active:scale-95 disabled:bg-gray-400 flex items-center justify-center"
+                    class="w-full sm:w-1/2 px-8 py-4 bg-gradient-to-r from-emerald-500 to-green-400 text-white font-extrabold text-xl rounded-2xl shadow-xl hover:shadow-2xl transition duration-300 transform hover:scale-[1.02] active:scale-95 disabled:from-gray-400 disabled:to-gray-500 disabled:border-gray-600 border-b-4 border-emerald-700 flex items-center justify-center"
                     disabled>
-                    <span class="text-2xl" aria-hidden="true">🖨️</span>
-                    <span class="sr-only">Imprimir / Descargar PDF</span>
+                    <span class="text-3xl mr-2" aria-hidden="true">🖨️</span>
+                    Imprimir / Descargar PDF
                 </button>
             </div>
             
         </div>
 
-        <!-- Área Imprimible (Resultado) --><div id="printableArea" class="printable-area p-4 sm:p-6 rounded-xl border border-gray-200" style="display: none;">
-            <h1 id="outputTitle" class="text-2xl sm:text-3xl font-extrabold text-center mb-6 text-gray-900 uppercase"></h1>
+        <!-- Área Imprimible (Resultado) -->
+        <div id="printableArea" class="printable-area p-6 sm:p-8 rounded-xl border border-gray-200 bg-white shadow-lg transition duration-500" style="display: none;">
             
             <!-- CONTENEDOR CENTRAL PARA ALINEAR LA CUADRÍCULA Y LA LISTA -->
-            <div id="puzzleContentWrapper" class="mx-auto" style="max-width: 600px;"> 
-                <div id="puzzleOutput" class="w-full aspect-square">
+            <div id="puzzleContentWrapper" class="mx-auto flex flex-col md:flex-row gap-8 items-start" style="max-width: 900px;"> 
+
+                <!-- El Título, ahora dentro de wrapper, pero controlado por CSS de impresión (Problema 1) -->
+                <h1 id="outputTitle" class="text-3xl sm:text-4xl font-extrabold text-center mb-8 text-gray-900 uppercase font-permanent-marker w-full"></h1>
+                
+                <!-- Cuadrícula (se mantiene 1:1) -->
+                <div id="puzzleOutput" class="w-full md:w-2/3 aspect-square flex-shrink-0">
                     <!-- Aquí se renderizará la cuadrícula --></div>
                 
-                <!-- Lista de Palabras -->
-                <!-- Se eliminó el 'pl-4' para centrar correctamente dentro del contenedor padre -->
-                <div id="wordListOutput" class="text-sm text-gray-600 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 mt-8">
-                    <!-- Aquí se renderizará la lista de palabras --></div>
+                <!-- Lista de Palabras (Diseño mejorado) -->
+                <div id="wordListContainer" class="w-full md:w-1/3 p-4 bg-gray-50 rounded-xl border border-gray-200 shadow-sm flex-shrink">
+                    <!-- Título que se oculta en impresión (Problema 3) -->
+                    <h3 class="text-lg font-bold text-indigo-600 mb-3 border-b border-indigo-200 pb-1">Palabras a Buscar:</h3>
+                    <div id="wordListOutput" class="text-sm text-gray-800 grid grid-cols-2 gap-x-4 gap-y-2">
+                        <!-- Aquí se renderizará la lista de palabras --></div>
+                </div>
             </div>
         </div>
 
-        <!-- Área de Mensajes --><div id="messageBox" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
-                <p id="messageText" class="text-lg font-semibold text-gray-800 mb-4"></p>
-                <button id="closeMessageBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">Entendido</button>
+        <!-- Área de Mensajes (Modal) -->
+        <div id="messageBox" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300">
+            <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full text-center transform transition-transform duration-300 scale-95" id="messageContent">
+                <p id="messageText" class="text-xl font-semibold text-gray-800 mb-6"></p>
+                <button id="closeMessageBtn" class="px-6 py-2 bg-indigo-500 text-white font-semibold rounded-lg hover:bg-indigo-600 transition duration-150 shadow-md">Aceptar</button>
             </div>
         </div>
 
@@ -193,6 +281,21 @@
             [1, -1],  // Suroeste (SW)
             [-1, -1]  // Noroeste (NW)
         ];
+        
+        const FONT_OPTIONS = {
+            'Permanent Marker': 'Permanent Marker (Marcador)',
+            'Balsamiq Sans': 'Balsamiq Sans (Juguetón)',
+            'Alegreya Sans': 'Alegreya Sans (Clara)',
+            'Lobster': 'Lobster (Decorativa)',
+            'Cabin Sketch': 'Cabin Sketch (Boceto)',
+            'Pacifico': 'Pacifico (Manuscrita)',
+            'Josefin Sans': 'Josefin Sans (Geométrica)',
+            'Handlee': 'Handlee (Escrita a mano)',
+            'Righteous': 'Righteous (Fuerte)',
+            'Roboto Mono': 'Roboto Mono (Monospacio)'
+        };
+        const DEFAULT_FONT_CLASS = 'font-permanent-marker';
+
 
         // Referencias a elementos del DOM
         const wordInput = document.getElementById('wordInput');
@@ -209,6 +312,7 @@
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
         const closeMessageBtn = document.getElementById('closeMessageBtn');
+        const fontSelect = document.getElementById('fontSelect'); 
         
         // =========================================================================
         // Lógica de UI - Mensajes y Palabras
@@ -217,10 +321,17 @@
         function showMessage(text) {
             messageText.textContent = text;
             messageBox.classList.remove('hidden');
+            // Añadir efectos de transición
+            document.getElementById('messageContent').classList.remove('scale-95');
+            document.getElementById('messageContent').classList.add('scale-100');
         }
 
         closeMessageBtn.addEventListener('click', () => {
-            messageBox.classList.add('hidden');
+            document.getElementById('messageContent').classList.remove('scale-100');
+            document.getElementById('messageContent').classList.add('scale-95');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 300); // Esperar que termine la transición
         });
 
         function formatWord(word) {
@@ -284,8 +395,9 @@
                 emptyMessage.classList.add('hidden');
                 wordList.forEach(word => {
                     const tag = document.createElement('span');
-                    tag.className = 'flex items-center bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full cursor-pointer hover:bg-red-200 transition duration-150';
-                    tag.innerHTML = `${word} <button class="ml-2 text-red-500 hover:text-red-700 font-bold leading-none" data-word="${word}">&times;</button>`;
+                    // Estilo de etiqueta mejorado
+                    tag.className = 'flex items-center bg-pink-100 text-pink-800 text-sm font-medium px-4 py-1 rounded-full cursor-pointer shadow-md hover:bg-pink-200 transition duration-150';
+                    tag.innerHTML = `${word} <button class="ml-2 text-pink-600 hover:text-red-700 font-bold leading-none text-xl" data-word="${word}">&times;</button>`;
                     tag.querySelector('button').addEventListener('click', (e) => removeWord(e.target.dataset.word));
                     wordListDisplay.appendChild(tag);
                 });
@@ -378,10 +490,17 @@
             
             outputTitle.textContent = title.toUpperCase() || "SOPA DE LETRAS";
             
+            // Aplicar la fuente seleccionada SOLO al título (IMPORTANTE)
+            // 1. Eliminar cualquier clase de fuente anterior
+            outputTitle.className = outputTitle.className.split(' ').filter(c => !c.startsWith('font-')).join(' ');
+            // 2. Aplicar la nueva clase de fuente seleccionada
+            outputTitle.classList.add(fontSelect.value);
+            outputTitle.classList.add('text-3xl', 'sm:text-4xl', 'font-extrabold', 'text-center', 'mb-8', 'text-gray-900', 'uppercase', 'w-full');
+
             // 1. Renderizar la cuadrícula
             puzzleOutput.innerHTML = '';
             puzzleOutput.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-            puzzleOutput.className = 'grid-container w-full aspect-square'; // Reset classes for dynamic sizing (w-full ensures it takes the 600px max width from its parent)
+            puzzleOutput.className = 'grid-container w-full md:w-2/3 aspect-square flex-shrink-0'; 
             
             grid.forEach(row => {
                 row.forEach(letter => {
@@ -396,19 +515,33 @@
             wordListOutput.innerHTML = '';
             placedWords.sort().forEach(word => {
                 const item = document.createElement('div');
-                // Clase ajustada a text-xs para que el texto sea más pequeño
-                item.className = 'flex items-center text-xs font-semibold tracking-wider text-gray-800 space-x-2'; 
+                // Estilo de lista mejorado
+                item.className = 'flex items-center text-sm font-medium tracking-wider text-gray-800 space-x-2'; 
                 // Ícono de checklist redondo (usando la clase word-list-icon definida en CSS)
-                item.innerHTML = `<span class="word-list-icon border-2 border-gray-500 rounded-full flex-shrink-0"></span><span>${word}</span>`;
+                item.innerHTML = `<span class="word-list-icon border-2 border-indigo-400 rounded-full flex-shrink-0"></span><span class="truncate">${word}</span>`;
                 wordListOutput.appendChild(item);
             });
             
-            printableArea.style.display = 'block';
+            printableArea.style.display = 'flex'; // Usar flex para centrado
         }
 
         // =========================================================================
         // Manejadores de Eventos
         // =========================================================================
+        
+        // Función para poblar el selector de fuentes
+        function populateFontSelector() {
+            for (const key in FONT_OPTIONS) {
+                const option = document.createElement('option');
+                // Convierte el nombre de la fuente a una clase CSS válida (ej: 'Permanent Marker' -> 'font-permanent-marker')
+                option.value = `font-${key.toLowerCase().replace(/ /g, '-')}`;
+                option.textContent = FONT_OPTIONS[key];
+                if (option.value === DEFAULT_FONT_CLASS) {
+                    option.selected = true;
+                }
+                fontSelect.appendChild(option);
+            }
+        }
 
         document.getElementById('addWordBtn').addEventListener('click', addWord);
         
@@ -419,46 +552,57 @@
             }
         });
 
+        // Listener para el cambio de fuente (aplica solo al título)
+        fontSelect.addEventListener('change', () => {
+            if (printableArea.style.display !== 'none') {
+                // Si la sopa está visible, aplicamos la nueva clase de fuente inmediatamente SOLO al título.
+                outputTitle.className = outputTitle.className.split(' ').filter(c => !c.startsWith('font-')).join(' ');
+                outputTitle.classList.add(fontSelect.value);
+                outputTitle.classList.add('text-3xl', 'sm:text-4xl', 'font-extrabold', 'text-center', 'mb-8', 'text-gray-900', 'uppercase', 'w-full');
+            }
+        });
+
         generateBtn.addEventListener('click', () => {
             if (wordList.length === 0) {
-                showMessage("Debes añadir al menos una palabra para generar la sopa.");
+                showMessage("¡Ups! Parece que olvidaste añadir palabras. ¡Elige algunas para empezar!");
                 return;
             }
             
             generateBtn.disabled = true;
-            generateBtn.textContent = 'Generando...';
+            generateBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Generando...';
 
-            // Pequeño timeout para que el UI se actualice y parezca que hay un proceso (aunque es casi instantáneo)
             setTimeout(() => {
                 const size = parseInt(gridSizeSelect.value);
                 const title = puzzleTitle.value.trim();
                 const { grid, placedWords } = generatePuzzle(wordList, size);
 
-                if (placedWords.length === 0 && wordList.length > 0) { // Solo mostrar si se intentaron añadir palabras
-                    showMessage("Advertencia: No se pudo colocar ninguna palabra en la cuadrícula. Intenta con un tamaño mayor, palabras más cortas o menos palabras.");
+                if (placedWords.length === 0 && wordList.length > 0) { 
+                    showMessage("Advertencia: No se pudo colocar ninguna palabra en la cuadrícula. Intenta con un tamaño mayor, palabras más cortas o menos palabras. Aún así, se mostrará la cuadrícula vacía.");
                 }
 
                 renderPuzzle(grid, placedWords, title);
                 printBtn.disabled = false;
                 generateBtn.disabled = false;
                 generateBtn.textContent = 'Generar Sopa de Letras';
-            }, 100);
+                
+                // Desplazar a la zona de impresión
+                printableArea.scrollIntoView({ behavior: 'smooth' });
+            }, 300); // Pequeño retraso para la animación
         });
 
         printBtn.addEventListener('click', () => {
-            // Esta función ejecuta el diálogo de impresión del navegador, que es el equivalente a Ctrl + P.
             window.print();
         });
 
         // Inicializar
         document.addEventListener('DOMContentLoaded', () => {
             renderWordListDisplay();
-            generateBtn.disabled = true; // Deshabilitar hasta que se añadan palabras
+            populateFontSelector(); // Llenar el selector al cargar
+            generateBtn.disabled = true; 
         });
 
         // Asegurar que al cambiar el tamaño del grid, las palabras se validan y se resetea la salida
         gridSizeSelect.addEventListener('change', () => {
-            // Filtra palabras que excedan el nuevo tamaño
             const newSize = parseInt(gridSizeSelect.value);
             let needsRemoval = false;
 
