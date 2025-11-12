@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Puzzles</title>
+    <title>The Puzzle</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Incluye todas las nuevas fuentes de Google Fonts -->
+    <!-- Incluye todas las fuentes de Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Permanent+Marker&family=Balsamiq+Sans&family=Alegreya+Sans&family=Lobster&family=Cabin+Sketch&family=Pacifico&family=Josefin+Sans&family=Handlee&family=Righteous&family=Roboto+Mono&display=swap" rel="stylesheet">
     <style>
         /* Estilo Base y Fondo Moderno */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #eef2f5; /* Color base muy claro */
-            /* Sutil degradado y patrón de fondo geométrico (Triángulos muy suaves) */
+            background-color: #eef2f5; 
             background-image: linear-gradient(135deg, #f8fafc 25%, transparent 25%), 
                               linear-gradient(225deg, #f8fafc 25%, transparent 25%), 
                               linear-gradient(45deg, #f8fafc 25%, transparent 25%), 
@@ -40,7 +39,7 @@
         .grid-container {
             display: grid;
             border: 2px solid #000000; /* Borde negro */
-            background-color: transparent; /* FONDO TRANSPARENTE EN PANTALLA */
+            background-color: transparent; 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 0.75rem; /* Esquinas redondeadas */
             overflow: hidden; 
@@ -51,10 +50,11 @@
             align-items: center;
             font-size: 0.8rem;
             font-weight: 700; 
-            color: #000000; /* Letras Oscuras para pantalla y print */
+            color: #000000; 
             padding: 0.1rem; 
             user-select: none;
             cursor: default;
+            transition: background-color 0.1s ease-out; /* Para la animación de "flash" */
         }
 
         /* Estilo para el título de la sopa */
@@ -69,9 +69,7 @@
         .word-list-preview {
             /* 3 Columnas */
             grid-template-columns: repeat(3, 1fr);
-            /* Tamaño de fuente más pequeño para el modo compacto */
-            font-size: 0.75rem; /* ~12px */
-            /* Espacios entre elementos de lista */
+            font-size: 0.75rem; 
             gap-x: 0.75rem;
             gap-y: 0.3rem;
         }
@@ -85,7 +83,36 @@
             flex-shrink: 0;
             box-shadow: 2px 2px 0 0 rgba(107, 114, 128, 0.7); 
         }
-        
+
+        /* Contenedor de lista e imagen (Flexbox para dividir 80/20) */
+        .list-image-container {
+            display: flex;
+            align-items: flex-start; /* Alineación superior para ambos */
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .list-container {
+            width: 80%; /* 80% del ancho para la lista */
+        }
+
+        .image-container {
+            width: 20%; /* 20% del ancho para la imagen */
+            display: flex;
+            justify-content: center;
+        }
+
+        .image-container img {
+            /* Modificación para forzar 1:1 */
+            width: 100%; /* Ocupa todo el 20% del contenedor */
+            aspect-ratio: 1 / 1; /* FORZAR ASPECTO CUADRADO (1:1) */
+            max-height: 100%; 
+            
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            object-fit: cover; /* Recortar si es necesario para llenar el cuadrado */
+        }
+
         /* ============================================== */
         /* MEDIA PRINT: Optimización para Impresión (A4) */
         /* ============================================== */
@@ -95,10 +122,8 @@
                 margin: 0 !important; 
                 padding: 0 !important; 
                 background: none !important; 
-                /* Se puede forzar el tamaño si es necesario, pero es mejor dejar al navegador */
             }
             
-            /* Eliminar fondo, borde y sombra del contenedor principal de la app */
             #app {
                 background-color: transparent !important;
                 box-shadow: none !important;
@@ -108,7 +133,6 @@
                 max-width: none !important;
             }
 
-            /* Asegura que el área imprimible sea el foco */
             .printable-area {
                 margin: 0 !important;
                 padding: 0.25in !important; /* Margen de impresión ULTRA REDUCIDO (0.6 cm) */
@@ -116,13 +140,12 @@
                 max-width: none !important;
                 width: 100% !important;
                 border: none !important;
-                background-color: transparent !important; /* ELIMINA EL FONDO BLANCO EXTRA */
+                background-color: transparent !important; 
             }
 
-            /* Título en impresión: centrado y espacio ultra reducido */
             #outputTitle {
                 font-size: 1.7rem !important; 
-                margin-bottom: 0.5rem !important; /* Espacio reducido: ~0.5 cm */
+                margin-bottom: 0.5rem !important; 
                 text-shadow: none;
                 width: 100% !important;
             }
@@ -131,47 +154,59 @@
             #puzzleOutput {
                 width: 100% !important;
                 max-width: 7in !important; /* Ancho típico de impresión */
-                margin: 0 auto !important; /* Centra la cuadrícula */
+                margin: 0 auto !important; 
             }
 
-            /* Contenedor de la Cuadrícula: Redondeado y Transparente en Impresión */
             .grid-container {
                 border-width: 2px !important;
                 border-color: #000 !important;
-                border-radius: 0.75rem !important; /* BORDE REDONDEADO FORZADO */
-                background-color: transparent !important; /* FONDO TRANSPARENTE EN IMPRESIÓN */
+                border-radius: 0.75rem !important; 
+                background-color: transparent !important; 
                 box-shadow: none !important; 
             }
 
-            /* Letras de la cuadrícula: MUY OSCURAS (Ya definido globalmente, se mantiene) */
             .grid-cell {
                 color: #000000 !important; 
                 font-size: 0.8rem !important; 
+                /* Desactivar cualquier color de fondo al imprimir */
+                background-color: transparent !important; 
             }
 
-            /* Lista de Palabras - Borde ELIMINADO y espacio ultra reducido */
+            /* Contenedor de lista e imagen en impresión */
             #wordListContainer {
-                margin-top: 0.5rem !important; /* ESPACIO REDUCIDO entre cuadrícula y lista */
+                margin-top: 0.5rem !important;
                 background: none !important;
                 border: none !important; 
                 box-shadow: none !important;
-                padding: 0 !important; /* Elimina padding para más espacio */
+                padding: 0 !important; 
+                /* Asegurar que el contenedor principal esté alineado y centrado */
+                max-width: 7in !important; 
+                margin: 0.5rem auto 0 auto !important;
             }
             
-            /* Asegura que la lista de palabras use los estilos compactos definidos en .word-list-preview */
+            /* Lista de Palabras en impresión */
             #wordListOutput {
                 grid-template-columns: repeat(3, 1fr) !important;
                 font-size: 0.75rem !important;
-                gap-x: 0.75rem;
-                gap-y: 0.3rem; 
             }
 
             .checkbox-3d {
-                /* Sombra negra para impresión */
                 height: 0.65rem !important;
                 width: 0.65rem !important;
                 box-shadow: 1.5px 1.5px 0 0 rgba(0, 0, 0, 0.7);
             }
+
+            /* Ajuste de contenedores flex en impresión */
+            .list-image-container {
+                gap: 0.5rem !important; /* Espacio reducido */
+            }
+            .list-container { width: 80% !important; }
+            .image-container { width: 20% !important; }
+            .image-container img { 
+                height: auto !important; 
+                width: 100% !important;
+                aspect-ratio: 1 / 1 !important; /* 1:1 en impresión */
+            } 
         }
     </style>
 </head>
@@ -182,8 +217,9 @@
 
         <!-- Área de Control (No Imprimir) -->
         <div class="no-print">
+            <!-- CAMBIO AQUÍ: The Puzzle en singular -->
             <h1 class="text-4xl font-extrabold text-gray-900 mb-2 flex items-center">
-                <span class="text-indigo-600 mr-3 text-5xl">✨</span> The Puzzles
+                <span class="text-indigo-600 mr-3 text-5xl">✨</span> The Puzzle
             </h1>
             <p class="text-base text-gray-500 mb-8 border-b pb-4">Personaliza, genera e imprime tu puzzle con un acabado profesional.</p>
 
@@ -192,18 +228,17 @@
                 
                 <!-- Sección 1: Configuración General -->
                 <div class="space-y-4">
-                    <h2 class="text-xl font-bold text-gray-700 border-b pb-1">Configuración del Puzzle</h2>
+                    <h2 class="text-xl font-bold text-gray-700 border-b pb-1">Configuración del Puzzle (15 Palabras Requeridas)</h2>
                     <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-                        <!-- Título, ahora sin valor inicial en HTML -->
-                        <input type="text" id="puzzleTitle" placeholder="Título de la Sopa de Letras (Ej: Frutas)"
-                            class="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 text-base shadow-sm transition">
+                        <!-- Título (Siempre en mayúsculas) -->
+                        <input type="text" id="puzzleTitle" placeholder="TÍTULO DE LA SOPA DE LETRAS (EJ: FRUTAS)"
+                            class="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 text-base shadow-sm transition uppercase">
                         
-                        <select id="gridSize"
+                        <!-- Selector de Formato (Ancho x Alto) -->
+                        <select id="formatSelect"
                             class="p-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 text-base shadow-sm w-full md:w-48 transition">
-                            <!-- Tamaño 15x15 ahora por defecto -->
-                            <option value="15" selected>Tamaño 15x15</option>
-                            <option value="20">Tamaño 20x20</option>
-                            <option value="25">Tamaño 25x25</option>
+                            <option value="17x13" selected>Horizontal (17x13)</option>
+                            <option value="12x16">Vertical (12x16)</option>
                         </select>
 
                         <!-- Selector de Fuente -->
@@ -215,12 +250,11 @@
                 </div>
 
                 <!-- Sección 2: Gestión de Palabras -->
-                <!-- Separación sutil pt-8 -->
-                <div class="space-y-4 pt-8">
-                    <h2 class="text-xl font-bold text-gray-700 border-b pb-1">Palabras a Incluir</h2>
+                <div class="space-y-4 pt-4">
+                    <h2 class="text-xl font-bold text-gray-700 border-b pb-1">Palabras a Incluir (<span id="wordCount">0/15</span>)</h2>
                     <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                        <input type="text" id="wordInput" placeholder="Escribe una palabra y presiona Enter o Añadir"
-                            class="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-pink-500 focus:border-pink-500 text-base shadow-sm transition">
+                        <input type="text" id="wordInput" placeholder="ESCRIBE UNA PALABRA Y PRESIONA ENTER O AÑADIR (MÁX 15)"
+                            class="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-pink-500 focus:border-pink-500 text-base shadow-sm transition uppercase">
                         <button id="addWordBtn"
                             class="px-6 py-3 bg-pink-500 text-white font-semibold rounded-xl shadow-lg hover:bg-pink-600 transition duration-200 transform hover:scale-[1.03] active:scale-95 text-base">
                             + Añadir
@@ -229,12 +263,33 @@
 
                     <!-- Lista de Palabras Añadidas -->
                     <div id="wordListDisplay" class="flex flex-wrap gap-3 min-h-12 p-3 border-2 border-dashed border-gray-300 rounded-xl bg-white shadow-inner mt-4">
-                        <p class="text-gray-400 italic text-sm" id="emptyMessage">Aún no has añadido palabras. Intenta con "SOL", "LUNA", "ESTRELLA".</p>
+                        <p class="text-gray-400 italic text-sm" id="emptyMessage">Añade 15 palabras exactas. Intenta con "SOL", "LUNA", "ESTRELLA".</p>
+                    </div>
+                </div>
+
+                <!-- Sección 3: Imagen y Posición -->
+                <div class="space-y-4 pt-4">
+                    <h2 class="text-xl font-bold text-gray-700 border-b pb-1">Imagen (Opcional)</h2>
+                    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 items-center">
+                        
+                        <!-- Selector de Archivo -->
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Subir Imagen para el Puzzle (PNG/JPG) - Se forzará a 1:1</label>
+                            <input type="file" id="imageUploader" accept="image/*"
+                                class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 transition duration-200">
+                        </div>
+
+                        <!-- Selector de Posición -->
+                        <select id="imagePosition"
+                            class="p-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 text-base shadow-sm w-full md:w-48 transition">
+                            <option value="right" selected>Imagen a la Derecha</option>
+                            <option value="left">Imagen a la Izquierda</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
-            <!-- Botones de Acción Finales - ANCHO 50% (w-1/2) y ALTURA DELGADA (py-1) -->
+            <!-- Botones de Acción Finales -->
             <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-10">
                 <button id="generateBtn"
                     class="w-1/2 mx-auto sm:mx-0 px-8 py-1 bg-indigo-500 text-white font-medium text-base rounded-xl shadow-md hover:bg-indigo-600 transition duration-300 transform hover:scale-[1.01] active:scale-95">
@@ -250,22 +305,22 @@
             
         </div>
 
-        <!-- Área Imprimible (Resultado) - ESTRUCTURA SIMPLIFICADA Y LIMPIA -->
-        <!-- Se ajusta el padding en pantalla (p-4) para coincidir con la vista compacta -->
+        <!-- Área Imprimible (Resultado) -->
         <div id="printableArea" class="printable-area p-4 sm:p-6 rounded-xl border border-gray-200 bg-white shadow-lg transition duration-500" style="display: none;">
             
-            <!-- Título (mb-2 para un margen reducido en pantalla) -->
+            <!-- Título -->
             <h1 id="outputTitle" class="text-3xl sm:text-4xl font-extrabold text-center mb-2 text-gray-900 uppercase font-permanent-marker w-full"></h1>
             
             <!-- Cuadrícula (centrada en la pantalla) -->
-            <div id="puzzleOutput" class="mx-auto aspect-square" style="max-width: 600px;">
+            <!-- max-width y aspect-ratio se manejan dinámicamente en JS -->
+            <div id="puzzleOutput" class="mx-auto" style="max-width: 600px;">
                 <!-- Aquí se renderizará la cuadrícula --></div>
             
-            <!-- Lista de Palabras (mt-2 para un margen reducido en pantalla) -->
-            <div id="wordListContainer" class="mt-2 mx-auto p-4 rounded-xl" style="max-width: 600px;">
-                <!-- Se aplica la clase word-list-preview para 3 columnas y fuente pequeña -->
-                <div id="wordListOutput" class="word-list-preview text-gray-800 grid gap-x-4 gap-y-2">
-                    <!-- Aquí se renderizará la lista de palabras --></div>
+            <!-- Contenedor de Lista de Palabras e Imagen -->
+            <div id="wordListContainer" class="list-image-container mt-2 mx-auto p-4 rounded-xl" style="max-width: 600px;">
+                
+                <!-- La estructura se rellena y se reordena con JS -->
+                
             </div>
             
         </div>
@@ -284,7 +339,10 @@
         // =========================================================================
         // Configuración y Variables Globales
         // =========================================================================
+        const MAX_WORDS = 15;
         const wordList = [];
+        // CAMBIO AQUÍ: Ahora dice "The Puzzle" en la imagen de reemplazo
+        const DEFAULT_IMAGE_URL = 'https://placehold.co/150x150/000000/ffffff?text=The+Puzzle'; 
         // Alfabeto extendido para incluir Ñ y vocales acentuadas
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÑÁÉÍÓÚ'; 
         const DIRECTIONS = [
@@ -298,7 +356,7 @@
             [-1, -1]  // Noroeste (NW)
         ];
         
-        // NOMBRES SIMPLIFICADOS para el selector (SOLICITADO)
+        // NOMBRES SIMPLIFICADOS para el selector
         const FONT_OPTIONS = {
             'Permanent Marker': 'Marcador',
             'Balsamiq Sans': 'Juguetón',
@@ -312,8 +370,6 @@
             'Roboto Mono': 'Monospacio'
         };
         const DEFAULT_FONT_CLASS = 'font-permanent-marker';
-        
-        // Clave para el contador de puzzles en localStorage
         const PUZZLE_COUNT_KEY = 'puzzleCount'; 
 
 
@@ -327,26 +383,30 @@
         const puzzleOutput = document.getElementById('puzzleOutput');
         const outputTitle = document.getElementById('outputTitle');
         const wordListOutput = document.getElementById('wordListOutput');
-        const gridSizeSelect = document.getElementById('gridSize');
+        const formatSelect = document.getElementById('formatSelect'); 
         const printableArea = document.getElementById('printableArea');
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
         const closeMessageBtn = document.getElementById('closeMessageBtn');
         const fontSelect = document.getElementById('fontSelect'); 
         const wordListContainer = document.getElementById('wordListContainer');
+        const wordCountSpan = document.getElementById('wordCount');
+        const imageUploader = document.getElementById('imageUploader');
+        const imagePositionSelect = document.getElementById('imagePosition');
+
+        let currentImageURL = DEFAULT_IMAGE_URL;
+        let originalDocumentTitle = document.title;
         
         // =========================================================================
         // Lógica de Contador de Puzzles (Local Storage)
         // =========================================================================
 
         function getNextPuzzleNumber() {
-            // Obtiene el número actual de localStorage o 0 si no existe
             let currentCount = parseInt(localStorage.getItem(PUZZLE_COUNT_KEY) || '0', 10);
             return currentCount;
         }
 
         function incrementPuzzleCount() {
-            // Incrementa y guarda el nuevo número
             let currentCount = getNextPuzzleNumber();
             let newCount = currentCount + 1;
             localStorage.setItem(PUZZLE_COUNT_KEY, newCount.toString());
@@ -359,7 +419,6 @@
         function showMessage(text) {
             messageText.textContent = text;
             messageBox.classList.remove('hidden');
-            // Añadir efectos de transición
             document.getElementById('messageContent').classList.remove('scale-95');
             document.getElementById('messageContent').classList.add('scale-100');
         }
@@ -369,7 +428,7 @@
             document.getElementById('messageContent').classList.add('scale-95');
             setTimeout(() => {
                 messageBox.classList.add('hidden');
-            }, 300); // Esperar que termine la transición
+            }, 300); 
         });
 
         function formatWord(word) {
@@ -377,23 +436,44 @@
             return word.toUpperCase().replace(/[^A-ZÑÁÉÍÓÚ]/g, '');
         }
 
+        function updateWordCount() {
+            wordCountSpan.textContent = `${wordList.length}/${MAX_WORDS}`;
+            // Cambiar color si está fuera del límite (solo si es diferente a 15)
+            if (wordList.length === MAX_WORDS) {
+                wordCountSpan.classList.remove('text-red-500');
+                wordCountSpan.classList.add('text-green-600');
+                generateBtn.disabled = false;
+            } else {
+                wordCountSpan.classList.remove('text-green-600');
+                wordCountSpan.classList.add('text-red-500');
+                generateBtn.disabled = true;
+            }
+        }
+
         function addWord() {
-            let word = wordInput.value.trim();
+            let word = wordInput.value.trim(); 
             if (word.length === 0) {
                 showMessage("Por favor, introduce una palabra válida.");
                 return;
             }
 
             const cleanWord = formatWord(word);
-            const maxLen = parseInt(gridSizeSelect.value);
+            // El tamaño máximo ahora depende del formato seleccionado
+            const [width, height] = formatSelect.value.split('x').map(Number);
+            const maxLen = Math.max(width, height); 
 
             if (cleanWord.length === 0) {
                 showMessage("La palabra solo debe contener letras (A-Z, Ñ, Á, É, Í, Ó, Ú).");
                 return;
             }
 
+            if (wordList.length >= MAX_WORDS) {
+                showMessage(`Solo se permiten ${MAX_WORDS} palabras. Por favor, elimina una para añadir otra.`);
+                return;
+            }
+
             if (cleanWord.length > maxLen) {
-                showMessage(`La palabra es demasiado larga (${cleanWord.length} letras). El tamaño máximo actual de la cuadrícula es ${maxLen}x${maxLen}.`);
+                showMessage(`La palabra es demasiado larga (${cleanWord.length} letras). El tamaño máximo para el formato seleccionado es ${maxLen}.`);
                 return;
             }
 
@@ -405,9 +485,7 @@
             wordList.push(cleanWord);
             wordInput.value = '';
             renderWordListDisplay();
-            
-            // Habilitar el botón de generar si hay palabras
-            generateBtn.disabled = false;
+            updateWordCount();
         }
 
         function removeWord(wordToRemove) {
@@ -416,9 +494,9 @@
                 wordList.splice(index, 1);
             }
             renderWordListDisplay();
+            updateWordCount();
 
-            if (wordList.length === 0) {
-                generateBtn.disabled = true;
+            if (wordList.length !== MAX_WORDS) {
                 printBtn.disabled = true;
                 printableArea.style.display = 'none';
             }
@@ -433,7 +511,6 @@
                 emptyMessage.classList.add('hidden');
                 wordList.forEach(word => {
                     const tag = document.createElement('span');
-                    // Estilo de etiqueta mejorado
                     tag.className = 'flex items-center bg-pink-100 text-pink-800 text-sm font-medium px-4 py-1 rounded-full cursor-pointer shadow-md hover:bg-pink-200 transition duration-150';
                     tag.innerHTML = `${word} <button class="ml-2 text-pink-600 hover:text-red-700 font-bold leading-none text-xl" data-word="${word}">&times;</button>`;
                     tag.querySelector('button').addEventListener('click', (e) => removeWord(e.target.dataset.word));
@@ -445,24 +522,27 @@
         // =========================================================================
         // Algoritmo de Generación de Sopa de Letras
         // =========================================================================
-
-        function createEmptyGrid(size) {
-            return Array.from({ length: size }, () => Array(size).fill(''));
+        // Grid ya no es cuadrado. Recibe Ancho y Alto.
+        function createEmptyGrid(width, height) {
+            return Array.from({ length: height }, () => Array(width).fill(''));
         }
 
-        function placeWord(grid, word, size) {
-            // Intentar colocar la palabra 500 veces antes de rendirse
+        // El algoritmo de colocación debe usar (X, Y) donde X es FILA (height) y Y es COLUMNA (width)
+        function placeWord(grid, word, width, height) {
             for (let attempts = 0; attempts < 500; attempts++) {
-                const startX = Math.floor(Math.random() * size);
-                const startY = Math.floor(Math.random() * size);
+                // Fila inicial (X) y Columna inicial (Y)
+                const startX = Math.floor(Math.random() * height);
+                const startY = Math.floor(Math.random() * width);
                 const [dx, dy] = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
                 
                 let fits = true;
                 
                 // 1. Verificar si cabe
-                if (startX + word.length * dx < 0 || startX + word.length * dx > size ||
-                    startY + word.length * dy < 0 || startY + word.length * dy > size) {
-                    continue; // No cabe en esta dirección
+                const endX = startX + (word.length - 1) * dx;
+                const endY = startY + (word.length - 1) * dy;
+
+                if (endX < 0 || endX >= height || endY < 0 || endY >= width) {
+                    continue; 
                 }
 
                 // 2. Verificar si no hay conflicto
@@ -486,19 +566,19 @@
                     return true;
                 }
             }
-            return false; // No se pudo colocar la palabra
+            return false; 
         }
 
-        function generatePuzzle(words, size) {
-            const grid = createEmptyGrid(size);
+        function generatePuzzle(words, width, height) {
+            const grid = createEmptyGrid(width, height);
             const placedWords = [];
 
-            // Ordenar las palabras de mayor a menor longitud para un mejor empaquetamiento
             const sortedWords = [...words].sort((a, b) => b.length - a.length);
 
             sortedWords.forEach(word => {
-                if (word.length <= size) {
-                    if (placeWord(grid, word, size)) {
+                const maxLen = Math.max(width, height);
+                if (word.length <= maxLen) {
+                    if (placeWord(grid, word, width, height)) {
                         placedWords.push(word);
                     } else {
                         console.warn(`No se pudo colocar la palabra: ${word}`);
@@ -507,15 +587,14 @@
             });
 
             // Rellenar espacios vacíos
-            for (let i = 0; i < size; i++) {
-                for (let j = 0; j < size; j++) {
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
                     if (grid[i][j] === '') {
                         grid[i][j] = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
                     }
                 }
             }
             
-            // Devolver la cuadrícula y las palabras que realmente se colocaron
             return { grid, placedWords };
         }
 
@@ -523,24 +602,19 @@
         // Lógica de Renderizado
         // =========================================================================
 
-        function renderPuzzle(grid, placedWords, title) {
-            const size = grid.length;
+        function renderPuzzle(grid, placedWords, title, width, height) {
             
             outputTitle.textContent = title.toUpperCase() || "SOPA DE LETRAS";
             
-            // Aplicar la fuente seleccionada SOLO al título (IMPORTANTE)
-            // 1. Eliminar cualquier clase de fuente anterior
+            // Aplicar la fuente seleccionada SOLO al título
             outputTitle.className = outputTitle.className.split(' ').filter(c => !c.startsWith('font-')).join(' ');
-            // 2. Aplicar la nueva clase de fuente seleccionada
-            outputTitle.classList.add(fontSelect.value);
-            // Se usa mb-2 en el HTML y se ajusta con CSS de print para más precisión.
-            outputTitle.classList.add('text-3xl', 'sm:text-4xl', 'font-extrabold', 'text-center', 'mb-2', 'text-gray-900', 'uppercase', 'w-full');
+            outputTitle.classList.add(fontSelect.value, 'text-3xl', 'sm:text-4xl', 'font-extrabold', 'text-center', 'mb-2', 'text-gray-900', 'uppercase', 'w-full');
 
             // 1. Renderizar la cuadrícula
             puzzleOutput.innerHTML = '';
-            puzzleOutput.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-            // Aplicar estilos para que la cuadrícula se centre en la vista de pantalla
-            puzzleOutput.className = 'grid-container mx-auto aspect-square'; 
+            puzzleOutput.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+            puzzleOutput.style.aspectRatio = `${width} / ${height}`; 
+            puzzleOutput.className = 'grid-container mx-auto'; 
             
             grid.forEach(row => {
                 row.forEach(letter => {
@@ -548,35 +622,60 @@
                     cell.className = 'grid-cell';
                     cell.textContent = letter;
                     puzzleOutput.appendChild(cell);
+                    
+                    // Añadir animación de "flash" (resplandor amarillo)
+                    setTimeout(() => {
+                        cell.style.backgroundColor = '#fef3c7'; // yellow-100
+                        setTimeout(() => {
+                            cell.style.backgroundColor = 'transparent'; // Resetear color (CSS transition se encarga de la suavidad)
+                        }, 100);
+                    }, Math.random() * 50); // Pequeño retraso para efecto "cascada"
                 });
             });
             
-            // 2. Renderizar la lista de palabras (con checklist 3D)
-            wordListOutput.innerHTML = '';
+            // 2. Renderizar Lista de Palabras e Imagen (Flex 80/20)
+            wordListContainer.innerHTML = '';
             
+            // Elemento de la Lista (80% de ancho)
+            const listDiv = document.createElement('div');
+            listDiv.className = 'list-container';
+            listDiv.innerHTML = `<div id="wordListOutputPrint" class="word-list-preview text-gray-800 grid"></div>`;
+            
+            // Elemento de la Imagen (20% de ancho)
+            const imageDiv = document.createElement('div');
+            imageDiv.className = 'image-container';
+            // Importante: La imagen se forzará a 1:1 por CSS
+            imageDiv.innerHTML = `<img id="wordListImage" src="${currentImageURL}" alt="Imagen del Puzzle" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_URL}'">`;
+
+            // Colocar los elementos según la posición seleccionada
+            if (imagePositionSelect.value === 'left') {
+                wordListContainer.appendChild(imageDiv);
+                wordListContainer.appendChild(listDiv);
+            } else { // right (por defecto)
+                wordListContainer.appendChild(listDiv);
+                wordListContainer.appendChild(imageDiv);
+            }
+
+            // Llenar la lista
+            const listOutputElement = listDiv.querySelector('#wordListOutputPrint');
             placedWords.sort().forEach(word => {
                 const item = document.createElement('div');
-                // Asegura que las letras de la lista se vean con el mismo tamaño compacto
                 item.className = 'flex items-center text-sm font-medium tracking-wider text-gray-800 space-x-2'; 
-                // Ícono de checklist 3D (nueva clase checkbox-3d)
                 item.innerHTML = `<span class="checkbox-3d flex-shrink-0"></span><span class="truncate">${word}</span>`;
-                wordListOutput.appendChild(item);
+                listOutputElement.appendChild(item);
             });
             
-            printableArea.style.display = 'block'; // Mostrar como bloque para el flujo vertical
+            printableArea.style.display = 'block'; 
         }
 
         // =========================================================================
         // Manejadores de Eventos
         // =========================================================================
         
-        // Función para poblar el selector de fuentes
         function populateFontSelector() {
             for (const key in FONT_OPTIONS) {
                 const option = document.createElement('option');
-                // Convierte el nombre de la fuente a una clase CSS válida
                 option.value = `font-${key.toLowerCase().replace(/ /g, '-')}`;
-                // Usa solo el descriptor (SOLICITADO)
                 option.textContent = FONT_OPTIONS[key]; 
                 if (option.value === DEFAULT_FONT_CLASS) {
                     option.selected = true;
@@ -587,6 +686,16 @@
 
         document.getElementById('addWordBtn').addEventListener('click', addWord);
         
+        // Listener para convertir a mayúsculas al escribir en la palabra
+        wordInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        // Listener para convertir a mayúsculas al escribir en el título
+        puzzleTitle.addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
         wordInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -594,19 +703,28 @@
             }
         });
 
-        // Listener para el cambio de fuente (aplica solo al título)
-        fontSelect.addEventListener('change', () => {
-            if (printableArea.style.display !== 'none') {
-                // Si la sopa está visible, aplicamos la nueva clase de fuente inmediatamente SOLO al título.
-                outputTitle.className = outputTitle.className.split(' ').filter(c => !c.startsWith('font-')).join(' ');
-                outputTitle.classList.add(fontSelect.value);
-                outputTitle.classList.add('text-3xl', 'sm:text-4xl', 'font-extrabold', 'text-center', 'mb-2', 'text-gray-900', 'uppercase', 'w-full');
+        // Listener para la carga de imagen
+        imageUploader.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // Limpiar URL anterior si existe para evitar pérdidas de memoria
+                if (currentImageURL && currentImageURL.startsWith('blob:')) {
+                    URL.revokeObjectURL(currentImageURL);
+                }
+                currentImageURL = URL.createObjectURL(file);
+            } else {
+                currentImageURL = DEFAULT_IMAGE_URL;
+            }
+            // Si el puzzle ya está visible, actualizar la imagen inmediatamente
+            const imgElement = document.getElementById('wordListImage');
+            if (imgElement) {
+                imgElement.src = currentImageURL;
             }
         });
 
         generateBtn.addEventListener('click', () => {
-            if (wordList.length === 0) {
-                showMessage("¡Ups! Parece que olvidaste añadir palabras. ¡Elige algunas para empezar!");
+            if (wordList.length !== MAX_WORDS) {
+                showMessage(`Debes ingresar exactamente ${MAX_WORDS} palabras para generar el puzzle.`);
                 return;
             }
             
@@ -614,68 +732,54 @@
             generateBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Generando...';
 
             setTimeout(() => {
-                const size = parseInt(gridSizeSelect.value);
-                // Usamos el título que el usuario haya puesto, que ya contiene el número de sopa actual.
+                const [width, height] = formatSelect.value.split('x').map(Number);
                 const title = puzzleTitle.value.trim(); 
-                const { grid, placedWords } = generatePuzzle(wordList, size);
+                const { grid, placedWords } = generatePuzzle(wordList, width, height);
 
                 if (placedWords.length === 0 && wordList.length > 0) { 
-                    showMessage("Advertencia: No se pudo colocar ninguna palabra en la cuadrícula. Intenta con un tamaño mayor, palabras más cortas o menos palabras. Aún así, se mostrará la cuadrícula vacía.");
+                    showMessage("Advertencia: No se pudo colocar la mayoría de las palabras. Intenta palabras más cortas o revisa si se solapan mucho.");
                 }
 
-                renderPuzzle(grid, placedWords, title);
+                renderPuzzle(grid, placedWords, title, width, height);
                 
-                // 1. Incrementa el contador para el siguiente puzzle (SOLICITADO: Solo aquí)
+                // Actualizaciones de estado
                 incrementPuzzleCount(); 
-                // 2. Actualiza el campo de entrada inmediatamente con el nuevo número
-                puzzleTitle.value = `Sopa #${getNextPuzzleNumber()}`;
+                puzzleTitle.value = `SOPA #${getNextPuzzleNumber()}`;
                 
                 printBtn.disabled = false;
                 generateBtn.disabled = false;
                 generateBtn.textContent = 'Generar Puzzle';
                 
-                // Desplazar a la zona de impresión
                 printableArea.scrollIntoView({ behavior: 'smooth' });
-            }, 300); // Pequeño retraso para la animación
+            }, 300); 
         });
 
         printBtn.addEventListener('click', () => {
+            // Lógica para cambiar el nombre del archivo PDF
+            const titleText = puzzleTitle.value.trim();
+            if (titleText) {
+                originalDocumentTitle = document.title; 
+                // Limpia el título para evitar caracteres no válidos en el nombre del archivo
+                document.title = titleText.replace(/[^a-zA-Z0-9\s]/g, '').trim().toUpperCase();
+            }
+            
             window.print();
+
+            setTimeout(() => {
+                document.title = originalDocumentTitle;
+            }, 500); 
         });
 
         // Inicializar
         document.addEventListener('DOMContentLoaded', () => {
             renderWordListDisplay();
-            populateFontSelector(); // Llenar el selector al cargar
-            generateBtn.disabled = true; 
+            populateFontSelector(); 
+            updateWordCount(); // Inicializa el contador
             
-            // Establecer el valor inicial del título usando el contador de localStorage
             const nextNum = getNextPuzzleNumber();
-            puzzleTitle.value = `Sopa #${nextNum}`;
-        });
-
-        // Asegurar que al cambiar el tamaño del grid, las palabras se validan y se resetea la salida
-        gridSizeSelect.addEventListener('change', () => {
-            const newSize = parseInt(gridSizeSelect.value);
-            let needsRemoval = false;
-
-            for (let i = wordList.length - 1; i >= 0; i--) {
-                if (wordList[i].length > newSize) {
-                    wordList.splice(i, 1);
-                    needsRemoval = true;
-                }
-            }
-
-            if (needsRemoval) {
-                renderWordListDisplay();
-                showMessage(`Se han eliminado automáticamente las palabras que excedían el tamaño máximo de ${newSize}x${newSize}.`);
-            }
-
-            printableArea.style.display = 'none';
-            printBtn.disabled = true;
-            if (wordList.length > 0) {
-                generateBtn.disabled = false;
-            }
+            puzzleTitle.value = `SOPA #${nextNum}`;
+            
+            originalDocumentTitle = document.title;
         });
 
     </script>
