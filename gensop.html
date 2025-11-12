@@ -40,7 +40,7 @@
         .grid-container {
             display: grid;
             border: 2px solid #000000; /* Borde negro */
-            background-color: #ffffff;
+            background-color: transparent; /* FONDO TRANSPARENTE EN PANTALLA */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 0.75rem; /* Esquinas redondeadas */
             overflow: hidden; 
@@ -86,13 +86,26 @@
             box-shadow: 2px 2px 0 0 rgba(107, 114, 128, 0.7); 
         }
         
-        /* Ocultar elementos y optimizar layout en la vista de impresión */
+        /* ============================================== */
+        /* MEDIA PRINT: Optimización para Impresión (A4) */
+        /* ============================================== */
         @media print {
             .no-print { display: none !important; }
             body { 
                 margin: 0 !important; 
                 padding: 0 !important; 
                 background: none !important; 
+                /* Se puede forzar el tamaño si es necesario, pero es mejor dejar al navegador */
+            }
+            
+            /* Eliminar fondo, borde y sombra del contenedor principal de la app */
+            #app {
+                background-color: transparent !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 auto !important;
+                max-width: none !important;
             }
 
             /* Asegura que el área imprimible sea el foco */
@@ -103,7 +116,7 @@
                 max-width: none !important;
                 width: 100% !important;
                 border: none !important;
-                background-color: transparent !important; /* Asegura fondo blanco */
+                background-color: transparent !important; /* ELIMINA EL FONDO BLANCO EXTRA */
             }
 
             /* Título en impresión: centrado y espacio ultra reducido */
@@ -119,6 +132,15 @@
                 width: 100% !important;
                 max-width: 7in !important; /* Ancho típico de impresión */
                 margin: 0 auto !important; /* Centra la cuadrícula */
+            }
+
+            /* Contenedor de la Cuadrícula: Redondeado y Transparente en Impresión */
+            .grid-container {
+                border-width: 2px !important;
+                border-color: #000 !important;
+                border-radius: 0.75rem !important; /* BORDE REDONDEADO FORZADO */
+                background-color: transparent !important; /* FONDO TRANSPARENTE EN IMPRESIÓN */
+                box-shadow: none !important; 
             }
 
             /* Letras de la cuadrícula: MUY OSCURAS (Ya definido globalmente, se mantiene) */
@@ -229,7 +251,7 @@
         </div>
 
         <!-- Área Imprimible (Resultado) - ESTRUCTURA SIMPLIFICADA Y LIMPIA -->
-        <!-- Se reduce el padding en pantalla (p-4) para coincidir con la vista compacta -->
+        <!-- Se ajusta el padding en pantalla (p-4) para coincidir con la vista compacta -->
         <div id="printableArea" class="printable-area p-4 sm:p-6 rounded-xl border border-gray-200 bg-white shadow-lg transition duration-500" style="display: none;">
             
             <!-- Título (mb-2 para un margen reducido en pantalla) -->
