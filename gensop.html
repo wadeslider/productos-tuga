@@ -51,7 +51,7 @@
             align-items: center;
             font-size: 0.8rem;
             font-weight: 700; 
-            color: #1f2937;
+            color: #000000; /* Letras Oscuras para pantalla y print */
             padding: 0.1rem; 
             user-select: none;
             cursor: default;
@@ -65,10 +65,25 @@
             transition: all 0.3s ease;
         }
 
-        /* Ícono de Checklist - Tamaño para vista de pantalla */
-        .word-list-icon {
-            height: 0.75rem; /* 12px */
-            width: 0.75rem;  /* 12px */
+        /* ESTILOS DE PREVISUALIZACIÓN EN PANTALLA Y EN IMPRESIÓN (Lista de Palabras) */
+        .word-list-preview {
+            /* 3 Columnas */
+            grid-template-columns: repeat(3, 1fr);
+            /* Tamaño de fuente más pequeño para el modo compacto */
+            font-size: 0.75rem; /* ~12px */
+            /* Espacios entre elementos de lista */
+            gap-x: 0.75rem;
+            gap-y: 0.3rem;
+        }
+
+        /* CUADRADO 3D SOLICITADO (Sombra Gris/Negra) */
+        .checkbox-3d {
+            height: 0.8rem;
+            width: 0.8rem;
+            background-color: transparent; 
+            border-radius: 0.1rem; 
+            flex-shrink: 0;
+            box-shadow: 2px 2px 0 0 rgba(107, 114, 128, 0.7); 
         }
         
         /* Ocultar elementos y optimizar layout en la vista de impresión */
@@ -83,17 +98,18 @@
             /* Asegura que el área imprimible sea el foco */
             .printable-area {
                 margin: 0 !important;
-                padding: 0.5in !important; /* Margen de impresión */
+                padding: 0.25in !important; /* Margen de impresión ULTRA REDUCIDO (0.6 cm) */
                 box-shadow: none !important;
                 max-width: none !important;
                 width: 100% !important;
                 border: none !important;
+                background-color: transparent !important; /* Asegura fondo blanco */
             }
 
-            /* Título en impresión: centrado */
+            /* Título en impresión: centrado y espacio ultra reducido */
             #outputTitle {
                 font-size: 1.7rem !important; 
-                margin-bottom: 1.5rem !important;
+                margin-bottom: 0.5rem !important; /* Espacio reducido: ~0.5 cm */
                 text-shadow: none;
                 width: 100% !important;
             }
@@ -105,45 +121,34 @@
                 margin: 0 auto !important; /* Centra la cuadrícula */
             }
 
-            /* Lista de Palabras - Estilos simplificados y alineados */
-            #wordListContainer {
-                margin-top: 1.5rem !important;
-                width: 100% !important;
-                max-width: 7in !important; 
-                margin-left: auto !important;
-                margin-right: auto !important;
-                padding: 0.5rem !important; /* Espaciado dentro del borde */
-                background: none !important;
-                border: 1px solid #000 !important; /* BORDE DELGADO NEGRO (SOLICITADO) */
-                border-radius: 0.25rem !important;
-                box-shadow: none !important;
-            }
-            
-            .grid-container {
-                border-width: 1px; 
-                border-color: #000;
-                border-radius: 0.25rem; 
-                box-shadow: none;
-            }
+            /* Letras de la cuadrícula: MUY OSCURAS (Ya definido globalmente, se mantiene) */
             .grid-cell {
-                font-size: 0.8rem !important; /* Ligeramente aumentado para impresión */
-                height: auto;
-                padding: 1px; /* Padding más ajustado */
-                line-height: 1; 
-            }
-            
-            #wordListOutput {
-                gap-x: 0.75rem;
-                gap-y: 0.3rem; 
-                margin-top: 0 !important; 
+                color: #000000 !important; 
                 font-size: 0.8rem !important; 
             }
 
-            .word-list-icon {
-                height: 0.6rem !important;
-                width: 0.6rem !important;
-                border-width: 1px !important;
-                border-color: #000 !important; /* Asegura borde negro en impresión */
+            /* Lista de Palabras - Borde ELIMINADO y espacio ultra reducido */
+            #wordListContainer {
+                margin-top: 0.5rem !important; /* ESPACIO REDUCIDO entre cuadrícula y lista */
+                background: none !important;
+                border: none !important; 
+                box-shadow: none !important;
+                padding: 0 !important; /* Elimina padding para más espacio */
+            }
+            
+            /* Asegura que la lista de palabras use los estilos compactos definidos en .word-list-preview */
+            #wordListOutput {
+                grid-template-columns: repeat(3, 1fr) !important;
+                font-size: 0.75rem !important;
+                gap-x: 0.75rem;
+                gap-y: 0.3rem; 
+            }
+
+            .checkbox-3d {
+                /* Sombra negra para impresión */
+                height: 0.65rem !important;
+                width: 0.65rem !important;
+                box-shadow: 1.5px 1.5px 0 0 rgba(0, 0, 0, 0.7);
             }
         }
     </style>
@@ -224,18 +229,20 @@
         </div>
 
         <!-- Área Imprimible (Resultado) - ESTRUCTURA SIMPLIFICADA Y LIMPIA -->
-        <div id="printableArea" class="printable-area p-6 sm:p-8 rounded-xl border border-gray-200 bg-white shadow-lg transition duration-500" style="display: none;">
+        <!-- Se reduce el padding en pantalla (p-4) para coincidir con la vista compacta -->
+        <div id="printableArea" class="printable-area p-4 sm:p-6 rounded-xl border border-gray-200 bg-white shadow-lg transition duration-500" style="display: none;">
             
-            <!-- Título -->
-            <h1 id="outputTitle" class="text-3xl sm:text-4xl font-extrabold text-center mb-8 text-gray-900 uppercase font-permanent-marker w-full"></h1>
+            <!-- Título (mb-2 para un margen reducido en pantalla) -->
+            <h1 id="outputTitle" class="text-3xl sm:text-4xl font-extrabold text-center mb-2 text-gray-900 uppercase font-permanent-marker w-full"></h1>
             
             <!-- Cuadrícula (centrada en la pantalla) -->
             <div id="puzzleOutput" class="mx-auto aspect-square" style="max-width: 600px;">
                 <!-- Aquí se renderizará la cuadrícula --></div>
             
-            <!-- Lista de Palabras (con estilos para pantalla y print) -->
-            <div id="wordListContainer" class="mt-8 mx-auto p-4 border border-gray-200 rounded-xl" style="max-width: 600px;">
-                <div id="wordListOutput" class="text-sm text-gray-800 grid grid-cols-2 gap-x-4 gap-y-2">
+            <!-- Lista de Palabras (mt-2 para un margen reducido en pantalla) -->
+            <div id="wordListContainer" class="mt-2 mx-auto p-4 rounded-xl" style="max-width: 600px;">
+                <!-- Se aplica la clase word-list-preview para 3 columnas y fuente pequeña -->
+                <div id="wordListOutput" class="word-list-preview text-gray-800 grid gap-x-4 gap-y-2">
                     <!-- Aquí se renderizará la lista de palabras --></div>
             </div>
             
@@ -504,7 +511,8 @@
             outputTitle.className = outputTitle.className.split(' ').filter(c => !c.startsWith('font-')).join(' ');
             // 2. Aplicar la nueva clase de fuente seleccionada
             outputTitle.classList.add(fontSelect.value);
-            outputTitle.classList.add('text-3xl', 'sm:text-4xl', 'font-extrabold', 'text-center', 'mb-8', 'text-gray-900', 'uppercase', 'w-full');
+            // Se usa mb-2 en el HTML y se ajusta con CSS de print para más precisión.
+            outputTitle.classList.add('text-3xl', 'sm:text-4xl', 'font-extrabold', 'text-center', 'mb-2', 'text-gray-900', 'uppercase', 'w-full');
 
             // 1. Renderizar la cuadrícula
             puzzleOutput.innerHTML = '';
@@ -521,15 +529,15 @@
                 });
             });
             
-            // 2. Renderizar la lista de palabras (con checklist)
+            // 2. Renderizar la lista de palabras (con checklist 3D)
             wordListOutput.innerHTML = '';
             
             placedWords.sort().forEach(word => {
                 const item = document.createElement('div');
-                // Estilo de lista mejorado
+                // Asegura que las letras de la lista se vean con el mismo tamaño compacto
                 item.className = 'flex items-center text-sm font-medium tracking-wider text-gray-800 space-x-2'; 
-                // Ícono de checklist redondo, ahora con borde negro para mejor impresión
-                item.innerHTML = `<span class="word-list-icon border-2 border-black rounded-full flex-shrink-0"></span><span class="truncate">${word}</span>`;
+                // Ícono de checklist 3D (nueva clase checkbox-3d)
+                item.innerHTML = `<span class="checkbox-3d flex-shrink-0"></span><span class="truncate">${word}</span>`;
                 wordListOutput.appendChild(item);
             });
             
@@ -570,7 +578,7 @@
                 // Si la sopa está visible, aplicamos la nueva clase de fuente inmediatamente SOLO al título.
                 outputTitle.className = outputTitle.className.split(' ').filter(c => !c.startsWith('font-')).join(' ');
                 outputTitle.classList.add(fontSelect.value);
-                outputTitle.classList.add('text-3xl', 'sm:text-4xl', 'font-extrabold', 'text-center', 'mb-8', 'text-gray-900', 'uppercase', 'w-full');
+                outputTitle.classList.add('text-3xl', 'sm:text-4xl', 'font-extrabold', 'text-center', 'mb-2', 'text-gray-900', 'uppercase', 'w-full');
             }
         });
 
@@ -638,7 +646,7 @@
 
             if (needsRemoval) {
                 renderWordListDisplay();
-                showMessage(`Se han eliminado automáticamente las palabras que excedían el tamaño máximo de ${newSize}x${newize}.`);
+                showMessage(`Se han eliminado automáticamente las palabras que excedían el tamaño máximo de ${newSize}x${newSize}.`);
             }
 
             printableArea.style.display = 'none';
