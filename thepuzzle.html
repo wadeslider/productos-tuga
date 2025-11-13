@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Sopa de Letras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuentes para la estética y el efecto de burbuja -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Permanent+Marker&family=Luckiest+Guy&family=Bangers&display=swap" rel="stylesheet">
+    
+    <script>
+        // Configuración de Tailwind CSS con paleta de colores y fuentes
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'marker': ['Permanent Marker', 'cursive'],
+                        'bubble': ['Luckiest Guy', 'cursive'],
+                    },
+                    colors: {
+                        'primary': '#4f46e5', // Indigo
+                        'accent': '#14b8a6', // Teal
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ============================================== */
+        /* ESTILOS BASE Y CUSTOM */
+        /* ============================================== */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* gray-100 */
+            min-height: 100vh;
+        }
+
+        /* Tipografía de Burbuja (Luckiest Guy) */
+        .bubble-text { 
+            font-family: 'Luckiest Guy', cursive !important; 
+            /* REQUERIMIENTO: Color gris y borde negro más grueso */
+            color: #6b7280; /* gray-500 */
+            text-shadow: 
+                -1.5px -1.5px 0 #000,  
+                 1.5px -1.5px 0 #000,
+                -1.5px  1.5px 0 #000,
+                 1.5px  1.5px 0 #000;
+            line-height: 1.1; 
+            font-weight: 900;
+        }
+
+        /* Contenedor de la Cuadrícula */
+        .grid-container {
+            display: grid;
+            border: 2px solid #374151; /* gray-700 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-radius: 0.75rem; /* Bordes redondeados en vista previa */
+            overflow: hidden; 
+            background-color: white;
+        }
+        
+        /* Celdas de la cuadrícula */
+        .grid-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem; /* Un poco más pequeña para caber */
+            font-weight: 700; 
+            color: #000000; 
+            border: 1px solid #e5e7eb; /* Bordes de celda suaves */
+            user-select: none;
+            cursor: default;
+        }
+
+        /* REQUERIMIENTO: Sombra de Checkbox prominente (para la lista de palabras) */
+        .checkbox-3d {
+            width: 16px; 
+            height: 16px;
+            border: 2px solid #6b7280; 
+            background-color: #ffffff; 
+            border-radius: 4px;
+            /* Sombra más prominente */
+            box-shadow: 2px 2px 0 0.5px #1f2937; /* gray-800 */
+            flex-shrink: 0;
+            margin-right: 8px; 
+        }
+
+        /* ============================================== */
+        /* LAYOUTS ESPECÍFICOS DE PROPORCIÓN (Horizontal y Vertical) */
+        /* ============================================== */
+
+        /* Horizontal: 85% Lista (3 cols) / 15% Imagen */
+        .list-image-container-h {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+        }
+        .list-container-h { width: 85%; padding: 10px; }
+        .image-container-h { width: 15%; min-width: 100px; padding: 10px; }
+        .word-list-preview-h { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; width: 100%; }
+
+        /* Vertical: En desktop, 75% Grid / 25% Content */
+        @media (min-width: 768px) {
+            .grid-column-v { width: 75%; }
+            .list-image-column-v { width: 25%; min-width: 180px; }
+            
+            /* Dentro del 25%: 85% Lista / 15% Imagen (Altura) */
+            .list-image-content-v {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            .list-container-v { height: 85%; padding: 10px; overflow-y: auto; }
+            .image-container-v { height: 15%; min-height: 80px; display: flex; align-items: center; justify-content: center; padding: 10px; }
+        }
+
+        /* Estilo general para la lista en vertical (1 columna) */
+        .word-list-preview-v {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            width: 100%;
+            align-items: center;
+        }
+
+
+        /* ============================================== */
+        /* MEDIA PRINT: Optimización para Impresión (Tamaño Carta) */
+        /* ============================================== */
+        @page {
+            size: letter;
+            margin: 0.5in; /* Márgenes mínimos para maximizar el espacio */
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                background: none !important; 
+                -webkit-print-color-adjust: exact; /* Fundamental para colores y sombras */
+                color-adjust: exact;
+                font-size: 10pt; /* Reducir ligeramente la fuente */
+            }
+
+            /* Contenedor principal para imprimir */
+            .printable-area { 
+                padding: 0 !important; 
+                box-shadow: none !important; 
+                max-width: 100% !important; 
+                width: 100% !important; 
+            }
+            
+            /* REQUERIMIENTO: Cuadrícula con bordes redondeados en impresión */
+            .grid-container { border-radius: 0.75rem !important; box-shadow: none !important; border: 1px solid #000 !important; }
+            .grid-cell { border: 1px solid #ccc !important; font-size: 9pt !important; }
+            
+            /* REQUERIMIENTO: Asegurar color de burbuja en impresión */
+            .bubble-text { 
+                color: #6b7280 !important;
+                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000 !important;
+            }
+
+            /* Horizontal Print: Forzar 85/15 */
+            #horizontalLayout { max-width: 100% !important; }
+
+            /* Vertical Print: Forzar 75/25 en una sola fila (adaptando a la página) */
+            #verticalContentFlex { 
+                flex-direction: row !important; 
+                gap: 0.5rem !important; 
+                width: 100% !important; 
+                height: 10in; /* Altura de la página para acomodar el 85/15 de altura */
+            }
+            .grid-column-v { width: 75% !important; padding: 0 !important; }
+            .list-image-column-v { width: 25% !important; padding: 0 !important; }
+            
+            /* Forzar proporciones de altura en la columna 25% */
+            .list-image-content-v { height: 100% !important; }
+            .list-container-v { height: 85% !important; padding: 5px !important; }
+            .image-container-v { height: 15% !important; min-height: 50px !important; padding: 5px !important; }
+            .image-container-v img { max-height: 100% !important; }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- Global Variables for Firebase Setup -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Configuración de Firebase - Obligatorio para el entorno Canvas
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db, auth;
+        let userId = 'anon';
+
+        try {
+            if (Object.keys(firebaseConfig).length > 0) {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                setLogLevel('Debug');
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                    } else {
+                        userId = crypto.randomUUID();
+                    }
+                    console.log("Firebase Auth Ready. User ID:", userId);
+                    // Aquí se inicializaría la escucha de datos del usuario si fuera necesario
+                });
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } else {
+                console.warn("Firebase config not available. Running in local mode.");
+            }
+        } catch (error) {
+            console.error("Error setting up Firebase:", error);
+        }
+    </script>
+
+    <!-- UI DE CONFIGURACIÓN (NO IMPRIMIBLE) -->
+    <div class="no-print max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-2xl border border-primary/20 mb-8">
+        <h1 class="text-3xl font-extrabold text-primary mb-6 border-b-2 pb-2 border-accent">Generador de Sopa de Letras Profesional </h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Columna de Palabras -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-gray-700">1. Palabras a Incluir (<span id="wordCount" class="text-red-500">0/15</span>)</h2>
+                <div class="flex space-x-2">
+                    <input type="text" id="wordInput" placeholder="Escribe la palabra aquí" class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary uppercase shadow-inner">
+                    <button id="addWordBtn" class="bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-primary/90 transition duration-200 disabled:opacity-50">Añadir</button>
+                </div>
+                <div id="wordListDisplay" class="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg min-h-[50px]">
+                    <!-- Las palabras añadidas se renderizarán aquí -->
+                </div>
+            </div>
+
+            <!-- Columna de Configuración Visual -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-gray-700">2. Configuración de Diseño</h2>
+
+                <div>
+                    <label for="puzzleTitle" class="block text-sm font-medium text-gray-700">Título del Puzzle:</label>
+                    <input type="text" id="puzzleTitle" class="mt-1 p-3 border border-gray-300 rounded-lg w-full focus:ring-primary focus:border-primary uppercase shadow-inner">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="formatSelect" class="block text-sm font-medium text-gray-700">Formato (Ancho x Alto):</label>
+                        <select id="formatSelect" class="mt-1 p-3 border border-gray-300 rounded-lg w-full focus:ring-primary focus:border-primary shadow-inner">
+                            <option value="15x15">15 x 15 (Cuadrado)</option>
+                            <option value="20x15">20 x 15 (Horizontal)</option>
+                            <option value="15x20">15 x 20 (Vertical)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="fontSelect" class="block text-sm font-medium text-gray-700">Fuente del Título:</label>
+                        <select id="fontSelect" class="mt-1 p-3 border border-gray-300 rounded-lg w-full focus:ring-primary focus:border-primary shadow-inner">
+                            <!-- Opciones se llenarán con JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="imageUploader" class="block text-sm font-medium text-gray-700">Cargar Logo/Imagen:</label>
+                        <input type="file" id="imageUploader" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    </div>
+                    <div>
+                        <label for="imagePosition" class="block text-sm font-medium text-gray-700">Posición de Imagen:</label>
+                        <select id="imagePosition" class="mt-1 p-3 border border-gray-300 rounded-lg w-full focus:ring-primary focus:border-primary shadow-inner">
+                            <option value="right">Derecha</option>
+                            <option value="left">Izquierda</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="mt-8 flex justify-center space-x-4">
+            <button id="generateBtn" class="bg-accent text-white font-bold py-3 px-8 rounded-xl shadow-xl hover:bg-accent/90 transition duration-200 disabled:opacity-50 flex items-center justify-center">
+                Generar Puzzle
+            </button>
+            <button id="printBtn" class="bg-gray-500 text-white font-bold py-3 px-8 rounded-xl shadow-xl hover:bg-gray-600 transition duration-200 disabled:opacity-50" disabled>
+                Imprimir (Tamaño Carta)
+            </button>
+        </div>
+    </div>
+
+    <!-- VENTANA MODAL PARA MENSAJES (NO IMPRIMIBLE) -->
+    <div id="messageBox" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex justify-center items-center transition-opacity duration-300">
+        <div id="messageContent" class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full transform scale-95 transition duration-300">
+            <h3 class="text-2xl font-bold text-red-600 mb-4">Error de Configuración</h3>
+            <p id="messageText" class="text-gray-700 mb-6"></p>
+            <button id="closeMessageBtn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition duration-200 w-full">Entendido</button>
+        </div>
+    </div>
+
+    <!-- ÁREA IMPRIMIBLE (Se muestra después de la generación) -->
+    <div id="printableArea" class="max-w-4xl mx-auto p-4 sm:p-8 bg-white rounded-2xl shadow-xl hidden">
+        
+        <!-- Contenedor para el título principal (Layout Horizontal) -->
+        <h1 id="outputTitle" class="font-marker text-4xl mb-4" style="display: none;"></h1>
+        
+        <!-- LAYOUT HORIZONTAL (Ancho > Alto, e.g., 20x15) -->
+        <div id="horizontalLayout" class="hidden">
+            <div id="puzzleOutputH" class="mb-4">
+                <!-- Cuadrícula se renderiza aquí -->
+            </div>
+            <div id="wordListContainerH" class="mt-4">
+                <!-- Lista de palabras + Imagen (85/15) se renderiza aquí -->
+            </div>
+        </div>
+
+        <!-- LAYOUT VERTICAL (Alto > Ancho, e.g., 15x20) -->
+        <div id="verticalLayout" class="hidden">
+            <div id="verticalContentFlex" class="flex flex-col md:flex-row gap-4 items-start w-full">
+                <!-- Las columnas 75% Grid y 25% Content se renderizarán y ordenarán aquí -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT PRINCIPAL -->
+    <script type="module">
+        // =========================================================================
+        // Configuración y Variables Globales (DECLARADAS PARA ACCESO EN EL MÓDULO)
+        // =========================================================================
+        const MAX_WORDS = 15;
+        const wordList = [];
+        const DEFAULT_IMAGE_URL = 'https://placehold.co/150x150/4f46e5/ffffff?text=LOGO+PUZZLE'; 
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÑ'; 
+        
+        const FONT_OPTIONS = {
+            'Bubble Comic': 'Burbuja/Cómic (Gris/Borde Negro)', 
+            'Permanent Marker': 'Marcador (Predeterminado)', 'Bangers': 'Impactante',
+        };
+        const PUZZLE_COUNT_KEY = 'puzzleCount'; 
+
+        let lastGeneratedGrid = null;
+        let lastPlacedWords = null; 
+        let currentImageURL = DEFAULT_IMAGE_URL;
+        let originalDocumentTitle = document.title;
+
+
+        // Variables para Referencias a Elementos del DOM (Se asignarán en DOMContentLoaded)
+        let wordInput, generateBtn, printBtn, printableArea, outputTitle, formatSelect, fontSelect, 
+            imageUploader, imagePositionSelect, wordListDisplay, wordCountSpan, puzzleTitle,
+            messageBox, messageText, closeMessageBtn, horizontalLayout, verticalLayout, 
+            verticalContentFlex, puzzleOutputH, wordListContainerH;
+
+        // =========================================================================
+        // Lógica de UI - Mensajes, Palabras y Estilos
+        // =========================================================================
+        
+        function showMessage(text) {
+            messageText.textContent = text;
+            messageBox.classList.remove('hidden');
+            document.getElementById('messageContent').classList.remove('scale-95');
+            document.getElementById('messageContent').classList.add('scale-100');
+        }
+
+        function formatWord(word) {
+            return word.toUpperCase().replace(/[^A-ZÑ]/g, ''); // Simplificado: solo letras A-Z y Ñ
+        }
+
+        function updateWordCount() {
+            // Se asume que wordCountSpan ya ha sido asignado en DOMContentLoaded
+            if (!wordCountSpan) return; 
+
+            wordCountSpan.textContent = `${wordList.length}/${MAX_WORDS}`;
+            wordCountSpan.classList.toggle('text-red-500', wordList.length !== MAX_WORDS);
+            wordCountSpan.classList.toggle('text-accent', wordList.length === MAX_WORDS);
+            generateBtn.disabled = (wordList.length !== MAX_WORDS);
+        }
+
+        function addWord() {
+            // Se asumen que wordInput y formatSelect ya han sido asignados
+            if (!wordInput || !formatSelect) return;
+
+            let word = wordInput.value.trim(); 
+            if (word.length === 0) return;
+
+            const cleanWord = formatWord(word);
+            const [width, height] = formatSelect.value.split('x').map(Number);
+            const maxLen = Math.max(width, height); 
+
+            if (cleanWord.length === 0) {
+                showMessage("La palabra solo debe contener letras (A-Z, Ñ).");
+                return;
+            }
+
+            if (wordList.length >= MAX_WORDS) {
+                showMessage(`Solo se permiten ${MAX_WORDS} palabras.`);
+                return;
+            }
+
+            if (cleanWord.length > maxLen) {
+                showMessage(`La palabra es demasiado larga (${cleanWord.length} letras). El tamaño máximo es ${maxLen}.`);
+                return;
+            }
+
+            if (wordList.includes(cleanWord)) {
+                showMessage("Esta palabra ya fue añadida.");
+                return;
+            }
+
+            wordList.push(cleanWord);
+            wordInput.value = '';
+            renderWordListDisplay();
+            updateWordCount();
+        }
+
+        function removeWord(wordToRemove) {
+            // Se asumen que printBtn y printableArea ya han sido asignados
+            if (!printBtn || !printableArea) return;
+
+            const index = wordList.indexOf(wordToRemove);
+            if (index > -1) {
+                wordList.splice(index, 1);
+            }
+            renderWordListDisplay();
+            updateWordCount();
+
+            if (wordList.length !== MAX_WORDS) {
+                printBtn.disabled = true;
+                printableArea.style.display = 'none';
+                lastGeneratedGrid = null; 
+                lastPlacedWords = null; 
+            }
+        }
+
+        function renderWordListDisplay() {
+            // Se asume que wordListDisplay ya ha sido asignado
+            if (!wordListDisplay) return;
+
+            wordListDisplay.innerHTML = '';
+            if (wordList.length === 0) {
+                wordListDisplay.innerHTML = '<p class="text-gray-400 italic text-sm">Añade 15 palabras exactas para generar el puzzle.</p>';
+            } else {
+                wordList.forEach(word => {
+                    const tag = document.createElement('span');
+                    tag.className = 'flex items-center bg-accent/20 text-gray-800 text-sm font-medium px-4 py-1 rounded-full cursor-pointer shadow-sm hover:bg-accent/30 transition duration-150';
+                    tag.innerHTML = `${word} <button class="ml-2 text-accent-600 hover:text-red-700 font-bold leading-none text-xl" data-word="${word}">&times;</button>`;
+                    tag.querySelector('button').addEventListener('click', (e) => removeWord(e.target.dataset.word));
+                    wordListDisplay.appendChild(tag);
+                });
+            }
+        }
+
+        // =========================================================================
+        // Algoritmo de Generación de Sopa de Letras (Simulado)
+        // =========================================================================
+        
+        function createEmptyGrid(width, height) {
+            return Array.from({ length: height }, () => Array(width).fill(''));
+        }
+
+        function generatePuzzle(words, width, height) {
+            const grid = createEmptyGrid(width, height);
+            const placedWords = [];
+            
+            // Simulación: todas las palabras se colocan
+            words.forEach(word => {
+                placedWords.push(word);
+            });
+
+            // Rellenar con letras aleatorias
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
+                    grid[i][j] = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                }
+            }
+            
+            return { grid, placedWords };
+        }
+
+        // =========================================================================
+        // Lógica de Renderizado y Layout (Cumpliendo Requisitos)
+        // =========================================================================
+        
+        function renderGrid(targetElement, grid, width, height) {
+            targetElement.innerHTML = '';
+            targetElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+            
+            // Grid de 10x10 para simulación visual (Asegura un tamaño manejable)
+            targetElement.classList.add('grid-container', 'w-full', 'aspect-square', 'p-1'); 
+            
+            grid.forEach(row => {
+                row.forEach(letter => {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell font-sans';
+                    cell.textContent = letter;
+                    targetElement.appendChild(cell);
+                });
+            });
+        }
+        
+        function renderWordList(targetElement, placedWords, isVerticalLayout) {
+            targetElement.innerHTML = '';
+            
+            const listClasses = isVerticalLayout ? 'word-list-preview-v' : 'word-list-preview-h';
+            targetElement.className = `${listClasses} text-gray-800 text-center`;
+            
+            placedWords.sort().forEach(word => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center text-xs font-medium tracking-wider text-gray-800 w-full justify-start md:justify-center'; 
+                
+                // Aplicar la clase prominente checkbox
+                item.innerHTML = `<span class="checkbox-3d"></span><span>${word}</span>`;
+                targetElement.appendChild(item);
+            });
+        }
+
+        function applyTitleStyle(element, fontClass, isVertical, isContentRight) {
+            // Limpiar clases de fuente y alineación anteriores
+            element.className = '';
+            
+            // Aplicar clases de fuente y tamaño
+            element.classList.add(fontClass, 'uppercase', 'w-full', 'text-gray-800');
+            element.classList.toggle('bubble-text', fontClass === 'font-bubble');
+            element.classList.toggle('text-4xl', !isVertical);
+            element.classList.toggle('text-3xl', isVertical);
+            
+            // Aplicar alineación según layout
+            if (isVertical) {
+                // REQUERIMIENTO: Título a la izquierda si el contenido (25%) está a la derecha, y viceversa
+                element.classList.toggle('text-left', isContentRight);
+                element.classList.toggle('text-right', !isContentRight);
+            } else {
+                element.classList.add('text-center');
+            }
+        }
+
+
+        function renderPuzzle(grid, placedWords, title, width, height) {
+            // Se asumen que imagePositionSelect, fontSelect, horizontalLayout, etc. ya han sido asignados
+            if (!imagePositionSelect || !fontSelect || !horizontalLayout) return;
+
+            const isVerticalLayout = width < height; 
+            const isContentRight = imagePositionSelect.value === 'right';
+            const fontClass = fontSelect.value;
+            
+            // Ocultar/Mostrar layouts base
+            horizontalLayout.classList.toggle('hidden', isVerticalLayout);
+            verticalLayout.classList.toggle('hidden', !isVerticalLayout);
+            
+            // Elemento de la imagen
+            const imageHtml = `<img src="${currentImageURL}" alt="Imagen del Puzzle" class="rounded-lg shadow-xl max-h-full max-w-full object-contain transition duration-300">`;
+            
+            if (isVerticalLayout) {
+                // === LAYOUT VERTICAL (75% Grid / 25% Content) ===
+                
+                verticalContentFlex.innerHTML = '';
+                verticalContentFlex.classList.add('flex', 'flex-col', 'md:flex-row', 'gap-4', 'items-start', 'w-full');
+                
+                // Columna 75% (Título + Cuadrícula)
+                const gridAndTitleContainer = document.createElement('div');
+                gridAndTitleContainer.className = 'grid-column-v flex flex-col items-center w-full'; 
+                
+                // Título
+                let titleElementV = outputTitle.cloneNode(true);
+                titleElementV.id = 'outputTitleVertical';
+                titleElementV.textContent = title.toUpperCase() || "SOPA DE LETRAS";
+                titleElementV.style.display = 'block';
+
+                applyTitleStyle(titleElementV, fontClass, isVerticalLayout, isContentRight);
+                gridAndTitleContainer.appendChild(titleElementV);
+                
+                // Cuadrícula (centrada a la izquierda/derecha según el título)
+                const puzzleOutputV = document.createElement('div');
+                puzzleOutputV.className = isContentRight ? 'flex justify-start w-full' : 'flex justify-end w-full';
+                const gridWrapper = document.createElement('div');
+                gridWrapper.style.maxWidth = '500px'; 
+                renderGrid(gridWrapper, grid, width, height);
+                puzzleOutputV.appendChild(gridWrapper);
+                
+                gridAndTitleContainer.appendChild(puzzleOutputV);
+
+
+                // Columna 25% (Lista + Imagen)
+                const stackColumn = document.createElement('div');
+                stackColumn.className = 'list-image-column-v flex flex-col items-center w-full min-h-[300px] md:min-h-[500px]'; 
+                
+                // Contenedor interno para el 85/15 (Altura)
+                const contentWrapper = document.createElement('div');
+                contentWrapper.className = 'list-image-content-v w-full bg-white rounded-xl shadow-lg border border-gray-200';
+                
+                // Lista (85% de la altura)
+                const listContainerV = document.createElement('div');
+                listContainerV.className = 'list-container-v flex flex-col justify-center items-center';
+                listContainerV.innerHTML = '<h3 class="text-lg font-bold mb-2 text-gray-700">Palabras a Encontrar:</h3><div id="wordListV"></div>';
+                renderWordList(listContainerV.querySelector('#wordListV'), placedWords, true);
+                
+                // Imagen (15% de la altura)
+                const imageContainerV = document.createElement('div');
+                imageContainerV.className = 'image-container-v border-t border-gray-100';
+                imageContainerV.innerHTML = imageHtml;
+                
+                // Apilar Lista (85%) arriba e Imagen (15%) abajo
+                contentWrapper.appendChild(listContainerV); 
+                contentWrapper.appendChild(imageContainerV); 
+                stackColumn.appendChild(contentWrapper);
+
+                // Ordenar las columnas: Grid va en la posición opuesta a la Lista/Imagen
+                if (isContentRight) {
+                    verticalContentFlex.appendChild(gridAndTitleContainer); // Grid+Title (75%)
+                    verticalContentFlex.appendChild(stackColumn); // Contenido (25%)
+                } else {
+                    verticalContentFlex.appendChild(stackColumn); // Contenido (25%)
+                    verticalContentFlex.appendChild(gridAndTitleContainer); // Grid+Title (75%)
+                }
+                
+                outputTitle.style.display = 'none'; // Ocultar título horizontal
+            
+            } else {
+                // === LAYOUT HORIZONTAL (Top-Down) ===
+                
+                // Título principal visible y estilizado
+                outputTitle.style.display = 'block'; 
+                outputTitle.textContent = title.toUpperCase() || "SOPA DE LETRAS";
+                applyTitleStyle(outputTitle, fontClass, isVerticalLayout, isContentRight);
+
+                // 1. Renderizar la Cuadrícula
+                puzzleOutputH.className = 'mx-auto w-full flex justify-center'; // Centrar
+                const gridWrapperH = document.createElement('div');
+                gridWrapperH.style.maxWidth = '600px'; 
+                renderGrid(gridWrapperH, grid, width, height);
+                puzzleOutputH.innerHTML = '';
+                puzzleOutputH.appendChild(gridWrapperH);
+                
+                // 2. Renderizar Lista de Palabras e Imagen (85/15)
+                wordListContainerH.innerHTML = '';
+                wordListContainerH.classList.add('list-image-container-h', 'mt-4', 'mx-auto', 'bg-white', 'rounded-xl', 'shadow-lg', 'border', 'border-gray-200');
+
+                // Contenedor 85% (Lista)
+                const listDiv = document.createElement('div');
+                listDiv.className = 'list-container-h flex flex-col items-center justify-center'; 
+                listDiv.innerHTML = '<h3 class="text-xl font-bold mb-3 text-gray-700 bubble-text">Palabras a Encontrar:</h3><div id="wordListH"></div>';
+                renderWordList(listDiv.querySelector('#wordListH'), placedWords, false);
+
+                // Contenedor 15% (Imagen)
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'image-container-h flex justify-center items-center border-l border-gray-200'; 
+                imageDiv.innerHTML = imageHtml;
+
+                // Ordenar según la posición de la imagen
+                if (imagePositionSelect.value === 'left') {
+                    wordListContainerH.appendChild(imageDiv);
+                    wordListContainerH.appendChild(listDiv);
+                } else { 
+                    wordListContainerH.appendChild(listDiv);
+                    wordListContainerH.appendChild(imageDiv);
+                }
+            }
+            
+            printableArea.style.display = 'block'; 
+        }
+
+        // =========================================================================
+        // Manejadores de Eventos e Inicialización
+        // =========================================================================
+        
+        function populateFontSelector() {
+             // Se asume que fontSelect ya ha sido asignado
+            if (!fontSelect) return;
+
+            for (const key in FONT_OPTIONS) {
+                const option = document.createElement('option');
+                option.value = `font-${key.toLowerCase().replace(/ /g, '-')}`;
+                option.textContent = FONT_OPTIONS[key]; 
+                if (key === 'Permanent Marker') {
+                    option.selected = true;
+                } else if (key === 'Bubble Comic') {
+                    // La fuente de burbuja es 'Luckiest Guy'
+                    option.value = 'font-bubble'; 
+                }
+                fontSelect.appendChild(option);
+            }
+        }
+        
+        // El bloque completo de inicialización y listeners ahora se envuelve aquí.
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // ASIGNACIÓN DE REFERENCIAS AL DOM (LA CORRECCIÓN PRINCIPAL)
+            wordInput = document.getElementById('wordInput');
+            generateBtn = document.getElementById('generateBtn');
+            printBtn = document.getElementById('printBtn');
+            printableArea = document.getElementById('printableArea');
+            outputTitle = document.getElementById('outputTitle');
+            formatSelect = document.getElementById('formatSelect'); 
+            fontSelect = document.getElementById('fontSelect'); 
+            imageUploader = document.getElementById('imageUploader');
+            imagePositionSelect = document.getElementById('imagePosition');
+            wordListDisplay = document.getElementById('wordListDisplay');
+            wordCountSpan = document.getElementById('wordCount');
+            puzzleTitle = document.getElementById('puzzleTitle');
+            messageBox = document.getElementById('messageBox');
+            messageText = document.getElementById('messageText');
+            closeMessageBtn = document.getElementById('closeMessageBtn');
+            horizontalLayout = document.getElementById('horizontalLayout');
+            verticalLayout = document.getElementById('verticalLayout');
+            verticalContentFlex = document.getElementById('verticalContentFlex');
+            puzzleOutputH = document.getElementById('puzzleOutputH');
+            wordListContainerH = document.getElementById('wordListContainerH');
+
+            // ASIGNACIÓN DE EVENT LISTENERS (AHORA SEGURO)
+            
+            closeMessageBtn.addEventListener('click', () => {
+                document.getElementById('messageContent').classList.remove('scale-100');
+                document.getElementById('messageContent').classList.add('scale-95');
+                setTimeout(() => {
+                    messageBox.classList.add('hidden');
+                }, 300); 
+            });
+
+            document.getElementById('addWordBtn').addEventListener('click', addWord);
+            wordInput.addEventListener('input', (e) => { e.target.value = e.target.value.toUpperCase(); });
+            puzzleTitle.addEventListener('input', (e) => { e.target.value = e.target.value.toUpperCase(); });
+            wordInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addWord();
+                }
+            });
+
+            imageUploader.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (currentImageURL && currentImageURL.startsWith('blob:')) {
+                        URL.revokeObjectURL(currentImageURL);
+                    }
+                    currentImageURL = URL.createObjectURL(file);
+                } else {
+                    currentImageURL = DEFAULT_IMAGE_URL;
+                }
+                if (lastGeneratedGrid) {
+                    const [width, height] = formatSelect.value.split('x').map(Number);
+                    const title = puzzleTitle.value.trim(); 
+                    renderPuzzle(lastGeneratedGrid, lastPlacedWords, title, width, height);
+                }
+            });
+            
+            formatSelect.addEventListener('change', () => {
+                printBtn.disabled = true;
+                printableArea.style.display = 'none';
+            });
+
+            imagePositionSelect.addEventListener('change', () => {
+                if (lastGeneratedGrid && lastPlacedWords) {
+                    const [width, height] = formatSelect.value.split('x').map(Number);
+                    const title = puzzleTitle.value.trim(); 
+                    renderPuzzle(lastGeneratedGrid, lastPlacedWords, title, width, height);
+                }
+            });
+
+            generateBtn.addEventListener('click', () => {
+                if (wordList.length !== MAX_WORDS) {
+                    showMessage(`Error: Debes ingresar exactamente ${MAX_WORDS} palabras. Tienes ${wordList.length}.`);
+                    return;
+                }
+                
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Generando...';
+
+                setTimeout(() => {
+                    const [width, height] = formatSelect.value.split('x').map(Number);
+                    const title = puzzleTitle.value.trim(); 
+                    
+                    // Generación (simulada)
+                    const { grid, placedWords } = generatePuzzle(wordList, width, height);
+                    
+                    lastGeneratedGrid = grid;
+                    lastPlacedWords = placedWords;
+
+                    renderPuzzle(grid, placedWords, title, width, height);
+                    
+                    puzzleTitle.value = title.toUpperCase(); 
+                    
+                    printBtn.disabled = false;
+                    generateBtn.disabled = false;
+                    generateBtn.textContent = 'Generar Puzzle';
+                    
+                    printableArea.scrollIntoView({ behavior: 'smooth' });
+                }, 500); 
+            });
+
+            printBtn.addEventListener('click', () => {
+                const titleText = puzzleTitle.value.trim();
+                if (titleText) {
+                    originalDocumentTitle = document.title; 
+                    document.title = titleText.toUpperCase();
+                }
+                
+                window.print();
+
+                setTimeout(() => {
+                    document.title = originalDocumentTitle;
+                }, 500); 
+            });
+
+
+            // Inicializar
+            renderWordListDisplay();
+            populateFontSelector(); 
+            updateWordCount(); 
+            
+            const nextNum = localStorage.getItem(PUZZLE_COUNT_KEY) ? parseInt(localStorage.getItem(PUZZLE_COUNT_KEY)) + 1 : 1;
+            puzzleTitle.value = `SOPA #${nextNum}`;
+            
+            originalDocumentTitle = document.title;
+        });
+
+    </script>
+</body>
+</html>
