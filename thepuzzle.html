@@ -58,6 +58,7 @@
             border-radius: 0.75rem; /* Bordes redondeados en vista previa */
             overflow: hidden; 
             background-color: white;
+            /* **IMPORTANTE:** Remover aspect-square */
         }
         
         /* Celdas de la cuadrícula */
@@ -71,6 +72,7 @@
             border: 1px solid #e5e7eb; /* Bordes de celda suaves */
             user-select: none;
             cursor: default;
+            padding: 0.1rem 0; /* Ajuste para mantener proporción */
         }
 
         /* REQUERIMIENTO: Sombra de Checkbox prominente (para la lista de palabras) */
@@ -95,9 +97,18 @@
             display: flex;
             align-items: stretch;
             width: 100%;
+            /* Remover fondo y sombra en el contenedor para la imagen sutil */
+            background: none; 
+            box-shadow: none;
         }
         .list-container-h { width: 85%; padding: 10px; }
-        .image-container-h { width: 15%; min-width: 100px; padding: 10px; }
+        .image-container-h { 
+            width: 15%; 
+            min-width: 80px; /* Hacer más pequeño */
+            padding: 10px; 
+            /* Imagen Sutil: Sin borde divisor */
+            border-left: none;
+        }
         .word-list-preview-h { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; width: 100%; }
 
         /* Vertical: En desktop, 75% Grid / 25% Content */
@@ -110,9 +121,22 @@
                 height: 100%;
                 display: flex;
                 flex-direction: column;
+                /* Imagen Sutil: Remover fondo y sombra del contenedor 25% */
+                background: none; 
+                box-shadow: none;
+                border: none;
             }
             .list-container-v { height: 85%; padding: 10px; overflow-y: auto; }
-            .image-container-v { height: 15%; min-height: 80px; display: flex; align-items: center; justify-content: center; padding: 10px; }
+            .image-container-v { 
+                height: 15%; 
+                min-height: 50px; /* Hacer más pequeño */
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                padding: 10px; 
+                /* Imagen Sutil: Sin borde superior */
+                border-top: none;
+            }
         }
 
         /* Estilo general para la lista en vertical (1 columna) */
@@ -162,24 +186,11 @@
                 text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000 !important;
             }
 
-            /* Horizontal Print: Forzar 85/15 */
-            #horizontalLayout { max-width: 100% !important; }
-
-            /* Vertical Print: Forzar 75/25 en una sola fila (adaptando a la página) */
-            #verticalContentFlex { 
-                flex-direction: row !important; 
-                gap: 0.5rem !important; 
-                width: 100% !important; 
-                height: 10in; /* Altura de la página para acomodar el 85/15 de altura */
-            }
-            .grid-column-v { width: 75% !important; padding: 0 !important; }
-            .list-image-column-v { width: 25% !important; padding: 0 !important; }
-            
-            /* Forzar proporciones de altura en la columna 25% */
-            .list-image-content-v { height: 100% !important; }
+            /* Forzar proporciones de altura en la columna 25% y eliminar bordes de imagen */
+            .list-image-content-v { height: 100% !important; border: none !important; background: none !important; box-shadow: none !important;}
             .list-container-v { height: 85% !important; padding: 5px !important; }
-            .image-container-v { height: 15% !important; min-height: 50px !important; padding: 5px !important; }
-            .image-container-v img { max-height: 100% !important; }
+            .image-container-v { height: 15% !important; min-height: 50px !important; padding: 5px !important; border: none !important; }
+            .image-container-h { border-left: none !important; }
         }
     </style>
 </head>
@@ -341,7 +352,8 @@
         // =========================================================================
         const MAX_WORDS = 15;
         const wordList = [];
-        const DEFAULT_IMAGE_URL = 'https://placehold.co/150x150/4f46e5/ffffff?text=LOGO+PUZZLE'; 
+        // Logo más pequeño y sutil
+        const DEFAULT_IMAGE_URL = 'https://placehold.co/100x100/ffffff/4f46e5?text=LOGO'; 
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÑ'; 
         
         const FONT_OPTIONS = {
@@ -378,8 +390,7 @@
         }
 
         function updateWordCount() {
-            // Se asume que wordCountSpan ya ha sido asignado en DOMContentLoaded
-            if (!wordCountSpan) return; 
+            if (!wordCountSpan || !generateBtn) return; 
 
             wordCountSpan.textContent = `${wordList.length}/${MAX_WORDS}`;
             wordCountSpan.classList.toggle('text-red-500', wordList.length !== MAX_WORDS);
@@ -388,7 +399,6 @@
         }
 
         function addWord() {
-            // Se asumen que wordInput y formatSelect ya han sido asignados
             if (!wordInput || !formatSelect) return;
 
             let word = wordInput.value.trim(); 
@@ -425,7 +435,6 @@
         }
 
         function removeWord(wordToRemove) {
-            // Se asumen que printBtn y printableArea ya han sido asignados
             if (!printBtn || !printableArea) return;
 
             const index = wordList.indexOf(wordToRemove);
@@ -444,7 +453,6 @@
         }
 
         function renderWordListDisplay() {
-            // Se asume que wordListDisplay ya ha sido asignado
             if (!wordListDisplay) return;
 
             wordListDisplay.innerHTML = '';
@@ -494,10 +502,14 @@
         
         function renderGrid(targetElement, grid, width, height) {
             targetElement.innerHTML = '';
+            // Define el número de columnas y permite que las filas fluyan (para formatos no cuadrados)
             targetElement.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+            targetElement.style.gridTemplateRows = `repeat(${height}, 1fr)`;
             
-            // Grid de 10x10 para simulación visual (Asegura un tamaño manejable)
-            targetElement.classList.add('grid-container', 'w-full', 'aspect-square', 'p-1'); 
+            // Asegurarse de que el contenedor de la cuadrícula no imponga un ancho máximo fijo.
+            // **IMPORTANTE: remover 'aspect-square' y 'w-full' forzado para permitir forma**
+            targetElement.classList.add('grid-container', 'p-1'); 
+            targetElement.classList.remove('w-full');
             
             grid.forEach(row => {
                 row.forEach(letter => {
@@ -517,6 +529,7 @@
             
             placedWords.sort().forEach(word => {
                 const item = document.createElement('div');
+                // Centrado en el modo horizontal, alineado en el modo vertical
                 item.className = 'flex items-center text-xs font-medium tracking-wider text-gray-800 w-full justify-start md:justify-center'; 
                 
                 // Aplicar la clase prominente checkbox
@@ -547,8 +560,7 @@
 
 
         function renderPuzzle(grid, placedWords, title, width, height) {
-            // Se asumen que imagePositionSelect, fontSelect, horizontalLayout, etc. ya han sido asignados
-            if (!imagePositionSelect || !fontSelect || !horizontalLayout) return;
+            if (!imagePositionSelect || !fontSelect || !horizontalLayout || !verticalLayout) return;
 
             const isVerticalLayout = width < height; 
             const isContentRight = imagePositionSelect.value === 'right';
@@ -558,8 +570,8 @@
             horizontalLayout.classList.toggle('hidden', isVerticalLayout);
             verticalLayout.classList.toggle('hidden', !isVerticalLayout);
             
-            // Elemento de la imagen
-            const imageHtml = `<img src="${currentImageURL}" alt="Imagen del Puzzle" class="rounded-lg shadow-xl max-h-full max-w-full object-contain transition duration-300">`;
+            // Imagen Sutil: Sin bordes, sin fondo, sin forma forzada.
+            const imageHtml = `<img src="${currentImageURL}" alt="Imagen del Puzzle" class="max-h-[80px] max-w-[80px] object-contain mx-auto">`;
             
             if (isVerticalLayout) {
                 // === LAYOUT VERTICAL (75% Grid / 25% Content) ===
@@ -569,6 +581,7 @@
                 
                 // Columna 75% (Título + Cuadrícula)
                 const gridAndTitleContainer = document.createElement('div');
+                // **Centrado del contenido de la columna 75%**
                 gridAndTitleContainer.className = 'grid-column-v flex flex-col items-center w-full'; 
                 
                 // Título
@@ -580,9 +593,9 @@
                 applyTitleStyle(titleElementV, fontClass, isVerticalLayout, isContentRight);
                 gridAndTitleContainer.appendChild(titleElementV);
                 
-                // Cuadrícula (centrada a la izquierda/derecha según el título)
+                // Cuadrícula (centrada horizontalmente dentro de la columna 75%)
                 const puzzleOutputV = document.createElement('div');
-                puzzleOutputV.className = isContentRight ? 'flex justify-start w-full' : 'flex justify-end w-full';
+                puzzleOutputV.className = 'flex justify-center w-full'; // Asegura centrado
                 const gridWrapper = document.createElement('div');
                 gridWrapper.style.maxWidth = '500px'; 
                 renderGrid(gridWrapper, grid, width, height);
@@ -595,19 +608,19 @@
                 const stackColumn = document.createElement('div');
                 stackColumn.className = 'list-image-column-v flex flex-col items-center w-full min-h-[300px] md:min-h-[500px]'; 
                 
-                // Contenedor interno para el 85/15 (Altura)
+                // Contenedor interno para el 85/15 (Altura) - Sin bordes/fondo para sutileza
                 const contentWrapper = document.createElement('div');
-                contentWrapper.className = 'list-image-content-v w-full bg-white rounded-xl shadow-lg border border-gray-200';
+                contentWrapper.className = 'list-image-content-v w-full';
                 
-                // Lista (85% de la altura)
+                // Lista (85% de la altura) - Contenedor blanco para contraste
                 const listContainerV = document.createElement('div');
-                listContainerV.className = 'list-container-v flex flex-col justify-center items-center';
+                listContainerV.className = 'list-container-v flex flex-col justify-center items-center bg-white rounded-xl shadow-lg border border-gray-200';
                 listContainerV.innerHTML = '<h3 class="text-lg font-bold mb-2 text-gray-700">Palabras a Encontrar:</h3><div id="wordListV"></div>';
                 renderWordList(listContainerV.querySelector('#wordListV'), placedWords, true);
                 
-                // Imagen (15% de la altura)
+                // Imagen (15% de la altura) - Contenedor transparente y centrado
                 const imageContainerV = document.createElement('div');
-                imageContainerV.className = 'image-container-v border-t border-gray-100';
+                imageContainerV.className = 'image-container-v flex justify-center items-center';
                 imageContainerV.innerHTML = imageHtml;
                 
                 // Apilar Lista (85%) arriba e Imagen (15%) abajo
@@ -635,26 +648,28 @@
                 applyTitleStyle(outputTitle, fontClass, isVerticalLayout, isContentRight);
 
                 // 1. Renderizar la Cuadrícula
-                puzzleOutputH.className = 'mx-auto w-full flex justify-center'; // Centrar
+                // **Centrado horizontal del contenido**
+                puzzleOutputH.className = 'mx-auto w-full flex justify-center'; 
                 const gridWrapperH = document.createElement('div');
-                gridWrapperH.style.maxWidth = '600px'; 
+                gridWrapperH.style.maxWidth = '100%'; // Permitir que la cuadrícula ocupe el espacio necesario
                 renderGrid(gridWrapperH, grid, width, height);
                 puzzleOutputH.innerHTML = '';
                 puzzleOutputH.appendChild(gridWrapperH);
                 
                 // 2. Renderizar Lista de Palabras e Imagen (85/15)
                 wordListContainerH.innerHTML = '';
-                wordListContainerH.classList.add('list-image-container-h', 'mt-4', 'mx-auto', 'bg-white', 'rounded-xl', 'shadow-lg', 'border', 'border-gray-200');
+                // Sin fondo/sombra en el contenedor principal (para la sutileza de la imagen)
+                wordListContainerH.classList.add('list-image-container-h', 'mt-4', 'mx-auto'); 
 
-                // Contenedor 85% (Lista)
+                // Contenedor 85% (Lista) - Contenedor blanco para contraste
                 const listDiv = document.createElement('div');
-                listDiv.className = 'list-container-h flex flex-col items-center justify-center'; 
+                listDiv.className = 'list-container-h flex flex-col items-center justify-center bg-white rounded-xl shadow-lg border border-gray-200'; 
                 listDiv.innerHTML = '<h3 class="text-xl font-bold mb-3 text-gray-700 bubble-text">Palabras a Encontrar:</h3><div id="wordListH"></div>';
                 renderWordList(listDiv.querySelector('#wordListH'), placedWords, false);
 
-                // Contenedor 15% (Imagen)
+                // Contenedor 15% (Imagen) - Contenedor transparente y centrado
                 const imageDiv = document.createElement('div');
-                imageDiv.className = 'image-container-h flex justify-center items-center border-l border-gray-200'; 
+                imageDiv.className = 'image-container-h flex justify-center items-center'; 
                 imageDiv.innerHTML = imageHtml;
 
                 // Ordenar según la posición de la imagen
@@ -695,7 +710,7 @@
         // El bloque completo de inicialización y listeners ahora se envuelve aquí.
         document.addEventListener('DOMContentLoaded', () => {
 
-            // ASIGNACIÓN DE REFERENCIAS AL DOM (LA CORRECCIÓN PRINCIPAL)
+            // ASIGNACIÓN DE REFERENCIAS AL DOM
             wordInput = document.getElementById('wordInput');
             generateBtn = document.getElementById('generateBtn');
             printBtn = document.getElementById('printBtn');
@@ -717,7 +732,7 @@
             puzzleOutputH = document.getElementById('puzzleOutputH');
             wordListContainerH = document.getElementById('wordListContainerH');
 
-            // ASIGNACIÓN DE EVENT LISTENERS (AHORA SEGURO)
+            // ASIGNACIÓN DE EVENT LISTENERS 
             
             closeMessageBtn.addEventListener('click', () => {
                 document.getElementById('messageContent').classList.remove('scale-100');
